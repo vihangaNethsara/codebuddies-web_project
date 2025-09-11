@@ -1,54 +1,88 @@
 .banner-notification {
-    background: $banner;
-    color: $primary-grey;
-    border-top: 1px solid $white;
+    background: #1F1F1F; // dark gray banner
+    color: #E5E5E5; // light gray text
+    border-top: 1px solid #B0B0B0; // mid gray border
     padding: 5px;
     text-align: center;
     text-decoration: none;
+
     a {
-        color: $primary-grey;
+        color: #FF7F50; // accent coral
         text-decoration: underline;
+        transition: color 0.3s ease;
+
+        &:hover {
+            color: #FF6347; // slightly darker coral on hover
+        }
     }
+
     button {
         display: inline;
         text-decoration: none;
+        background: #FF7F50; // accent button
+        color: #121212; // dark text
+        border: none;
+        border-radius: 5px;
+        padding: 3px 10px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+
+        &:hover {
+            background: #FF6347;
+        }
     }
-    label { font-weight: 400; }
+
+    label { 
+        font-weight: 400;
+        color: #E5E5E5;
+    }
 }
+
 .navbar {
-  margin-bottom: 0;
+    margin-bottom: 0;
+    background: #121212; // dark gray navbar
+    border-bottom: 1px solid #B0B0B0;
 
-  .container {
-    .navbar-brand {
-      @include font-face(700, 24px, bold, $black);
-      margin-top: 4px;
-      width: 8em;
+    .container {
+        .navbar-brand {
+            @include font-face(700, 24px, bold, #E5E5E5);
+            margin-top: 4px;
+            width: 8em;
 
-      img {
-        display: inline-block;
-      }
+            img {
+                display: inline-block;
+            }
+        }
     }
-  }
-  span.badge {
-    position: relative;
-    top: -2px;
-  }
+
+    span.badge {
+        position: relative;
+        top: -2px;
+        background: #FF7F50;
+        color: #121212;
+    }
 }
 
 .navbar-default {
-  background-color: $white;
+    background-color: #1F1F1F; // dark gray
+    border: none;
 
-  .navbar-nav {
-    li > a, li > a:hover {
-      @include font-face(400, 18px, normal, $cta-blue);
-      margin-top: 4px;
-    }
+    .navbar-nav {
+        li > a, li > a:hover {
+            @include font-face(400, 18px, normal, #E5E5E5);
+            margin-top: 4px;
+            transition: color 0.3s ease;
 
-    li > a > img {
-      display: inline-block;
-      width: 34px;
-      height: 34px;
-      margin-top: -4px;
+            &:hover {
+                color: #FF7F50;
+            }
+        }
+
+        li > a > img {
+            display: inline-block;
+            width: 34px;
+            height: 34px;
+            margin-top: -4px;
+        }
     }
-  }
 }

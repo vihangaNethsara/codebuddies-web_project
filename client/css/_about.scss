@@ -1,12 +1,13 @@
 #about {
   p, li {
-    @include font-face(400, 16px, normal, $primary-grey);
+    @include font-face(400, 16px, normal, #B0B0B0); // medium gray text
     line-height: 27px;
   }
 
   .flags img {
     @include border-radius(3px);
     width: 51px;
+    border: 1px solid #2D2D2D; // subtle border for modern gray look
   }
 
   .flags-group {
@@ -14,21 +15,37 @@
   }
 
   .about-top {
-    background: linear-gradient(to top, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .55) 18%, rgba(30, 144, 255, .64) 46%, rgba(3, 87, 232, .8) 100%), url(/images/language-logos.svg) center repeat;
+    background: linear-gradient(
+      to top,
+      rgba(255,127,80,0.5) 0%,   // coral semi-transparent
+      rgba(255,127,80,0.55) 18%,
+      rgba(255,127,80,0.64) 46%,
+      rgba(255,127,80,0.8) 100%
+    ),
+    url(/images/language-logos.svg) center repeat;
     padding: 100px 0;
-    h2 { @include font-face(700, 32px, bold, $bg-white); }
+
+    h2 {
+      @include font-face(700, 32px, bold, #E5E5E5); // light gray text
+      text-align: center;
+    }
   }
 
   .about-middle {
-    background: $bg-white;
+    background: #1F1F1F; // dark card background
     padding: 50px 0px;
-    h2 { @include font-face(700, 32px, bold, $primary-grey); }
-    .flags { margin: 20px 0;}
-    img { margin: 10px;}
+
+    h2 {
+      @include font-face(700, 32px, bold, #E5E5E5);
+      text-align: center;
+    }
+
+    .flags { margin: 20px 0; }
+    img { margin: 10px; }
   }
 
   .about-bottom {
-    background: $bg-lightgrey;
+    background: #2D2D2D; // slightly lighter dark gray
     padding: 100px 0px;
 
     .contributors {
@@ -37,6 +54,8 @@
       img {
         margin: 0 0 40px 40px;
         width: 100px;
+        border-radius: 50%; // modern circular look
+        border: 2px solid #FF7F50; // coral accent
       }
     }
   }
@@ -47,24 +66,27 @@
 
   a.user-popover {
     padding-top: 10px;
+
     .img-circle {
-        margin-top: 10px;
+      margin-top: 10px;
     }
+
     .popover {
-        margin-top: 10px;
+      margin-top: 10px;
+      background: #1F1F1F;
+      color: #E5E5E5;
+      border: 1px solid #FF7F50;
     }
-    .popover:hover {
-      cursor: default;
-    }
+
+    .popover:hover { cursor: default; }
 
     .fa, .fas, .fab, .far {
       padding: 0px 5px;
+      color: #FF7F50;
     }
   }
 
-  h2 {margin: 50px 0px 40px; }
-
-  h3.popover-title { margin-top: 0px;}
-  h3 { font-weight: 200;}
-
+  h2 { margin: 50px 0px 40px; }
+  h3.popover-title { margin-top: 0px; }
+  h3 { font-weight: 200; color: #E5E5E5; }
 }

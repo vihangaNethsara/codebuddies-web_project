@@ -1,47 +1,54 @@
-//Background colors
-$bg-lightgrey: #f9f9f9;
-$bg-white: #fff;
+// ==========================
+// Backgrounds
+// ==========================
+$bg-lightgrey: #2D2D2D;   // modern light dark gray
+$bg-white: #1F1F1F;       // card/background section
 
-//Other colors
-$header-bg: #3D5A96;
-$cta-blue: #1e90ff;
-$cta-red: #e60000;
-$banner: #90ff1e;
-$light-blue: #5eafff;
-$kudo: #9b9b9b;
-$primary-grey: #4a4a4a;
-$secondary-grey: #8e8e8e;
-$hangout-teaching: #f5a623;
-$hangout-collab: #7ed321;
-$hangout-silent: #d9534f;
-$icon-silent: #d9534f;
-$icon-teaching: #f0ad4e;
-$icon-collab: #7ed321;
-$inbox-green: #9acd32;
-$divider: #e1e1e1;
-$inactive: #cfcfcf;
+// ==========================
+// Primary Colors
+// ==========================
+$header-bg: #121212;       // navbar/top sections
+$cta-blue: #FF7F50;        // coral for primary buttons, links, accents
+$cta-red: #FF6347;         // hover/red accents
+$banner: #FF7F50;          // banner notification
+$light-blue: #5eafff;      // optional light accent
+$kudo: #9b9b9b;            // neutral gray (was undefined before)
+$primary-grey: #E5E5E5;    // main text
+$secondary-grey: #B0B0B0;  // secondary text
+
+// ==========================
+// Hangout / semantic
+// ==========================
+$hangout-teaching: #FF7F50; // coral
+$hangout-collab: #28A745;   // green
+$hangout-silent: #DC3545;   // red
+$icon-silent: #DC3545;
+$icon-teaching: #FF7F50;
+$icon-collab: #28A745;
+$inbox-green: #28A745;
+
+// ==========================
+// Others
+// ==========================
+$divider: #3A3A3A;          // subtle dark divider
+$inactive: #666666;
 $warm-grey: #9b9b9b;
-$dodgerblue: #1e90ff;
-$white: #fff;
-$black: #333;
-$success-green: #7ed321;
-$info-blue: #5bc0de;
-$warning-orange: #f0ad4e;
-$danger-red: #d9534f;
-$well: #f5f5f5;
+$dodgerblue: #FF7F50;
+$white: #E5E5E5;
+$black: #121212;
+$success-green: #28A745;
+$info-blue: #17A2B8;
+$warning-orange: #FFC107;
+$danger-red: #DC3545;
+$well: #1F1F1F;
 $end-hangout-color: #AD4545;
-$light-grey: #D3D3D3;
-$github: #333;
-$slack: #3AAF85;
+$light-grey: #3A3A3A;
+$github: #E5E5E5;
+$slack: #FF7F50;
 
-.text-warning-color {
-  color: $hangout-teaching;
-}
-
-.text-danger-color {
-  color: $hangout-silent;
-}
-
-.text-success-color {
-  color: $hangout-collab;
-}
+// ==========================
+// Text helper classes
+// ==========================
+.text-warning-color { color: $hangout-teaching; }
+.text-danger-color  { color: $hangout-silent; }
+.text-success-color { color: $hangout-collab; }

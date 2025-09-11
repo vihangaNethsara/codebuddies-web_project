@@ -1,11 +1,10 @@
 #footer {
-  @include font-face(400, 13px, normal, $secondary-grey);
-  background: $bg-lightgrey;
+  @include font-face(400, 13px, normal, #B0B0B0); // mid gray text
+  background: #1F1F1F; // dark gray footer background
   bottom: 0;
   padding: 50px 0;
   position: relative;
   width: 100%;
-  @include breakpoint(xsmall) { position: relative;}
 
   img {
     padding: 20px 0;
@@ -13,107 +12,91 @@
   }
 
   a {
-    color: $secondary-grey;
+    color: #B0B0B0; // mid gray links
     display: block;
     text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #FF7F50; // coral accent on hover
+    }
   }
 
   p {
-    color: $primary-grey;
+    color: #E5E5E5; // light gray text
     margin-bottom: 20px;
   }
 
-// column 1
+  // column 1 - footer logo
   .footer-logo {
     padding: 40px 0;
+
     @include breakpoint(tiny) { margin: 20px 0; }
     @include breakpoint(xsmall) { margin: 20px 0; }
     @include breakpoint(small) { margin: 0; padding: 0 0 40px; }
     @include breakpoint(xmedium) { margin: 0; padding: 0 0 40px; }
     @include breakpoint(medium) { margin: 0; padding: 0 0 40px; }
     @include breakpoint(large) { margin: 0; padding: 40px 0; }
-    a {display: inline-block; }
-    p {margin: 0; }
+
+    a { display: inline-block; }
+    p { margin: 0; color: #E5E5E5; }
   }
 
-// column 2
+  // column 2 - languages
   .footer-languages {
     @include breakpoint(tiny) { margin: 20px 0; }
     @include breakpoint(xsmall) { margin: 20px 0; }
     @include breakpoint(small) { margin: 0 0 20px; }
-    @include breakpoint(xmedium) { margin: 0 0 20px; }
-    a {padding-bottom: 10px; }
-    a.selected_language {font-weight: bold}
+
+    a { padding-bottom: 10px; color: #B0B0B0; }
+    a.selected_language { font-weight: bold; color: #FF7F50; } // coral accent
   }
 
-// column 3
+  // column 3 - links
   .footer-links {
     @include breakpoint(tiny) { margin: 20px 0; }
     @include breakpoint(xsmall) { margin: 20px 0; }
     @include breakpoint(small) { margin: 0 0 20px; }
-    @include breakpoint(xmedium) { margin: 0 0 20px; }
-    a {padding-bottom: 10px; }
+
+    a { padding-bottom: 10px; color: #B0B0B0; }
+    a:hover { color: #FF7F50; } // hover accent
   }
 
-// column 4
+  // column 4 - social icons
   .footer-social {
-
-    a {display: inline-block;}
-    .fa, .fab, .fas {font-size: 20px; padding-right: 10px;}
+    a { display: inline-block; }
+    .fa, .fab, .fas { font-size: 20px; padding-right: 10px; color: #B0B0B0; transition: color 0.3s ease; }
+    a:hover .fa, a:hover .fab, a:hover .fas { color: #FF7F50; }
   }
 
   .footer-icons {
-    @include breakpoint(tiny) {
-      .fa, .fab, .fas {padding: 0 5px;}
-    }
-
-    @include breakpoint(xsmall) {
-      .fa, .fab, .fas {padding: 0 5px;}
-     }
-
-    @include breakpoint(small) {
-      .fa, .fab, .fas {padding: 0 5px;}
-    }
-
-    @include breakpoint(xmedium) {
-      .fa, .fab, .fas {padding: 0 5px;}
-    }
+    @include breakpoint(tiny) { .fa, .fab, .fas { padding: 0 5px; } }
+    @include breakpoint(xsmall) { .fa, .fab, .fas { padding: 0 5px; } }
+    @include breakpoint(small) { .fa, .fab, .fas { padding: 0 5px; } }
+    @include breakpoint(xmedium) { .fa, .fab, .fas { padding: 0 5px; } }
   }
 
-// bottom sponsor section
+  // bottom sponsor section
   .footer-sponsor {
     @include breakpoint(tiny) { margin: 30px 0; }
     @include breakpoint(xsmall) { margin: 30px 0; }
     @include breakpoint(small) { margin: 30px 0 30px; }
     @include breakpoint(xmedium) { margin: 30px 0 30px; }
 
-    a {display: inline-block; }
-    p > strong { color:$primary-grey;}
-    p {color: $secondary-grey; }
+    a { display: inline-block; color: #B0B0B0; transition: color 0.3s ease; }
+    a:hover { color: #FF7F50; }
+    p > strong { color: #E5E5E5; }
+    p { color: #B0B0B0; }
   }
 
+  // bottom links hover
   a:hover {
-    color: #333;
+    color: #FF7F50;
   }
 
-// media queries
-  @include breakpoint(tiny) {
-    padding: 0;
-    text-align: center !important;
-  }
-
-  @include breakpoint(xsmall) {
-    padding: 0;
-    text-align: center !important;
-  }
-
-  @include breakpoint(small) {
-    padding: 50px 0;
-    text-align: center !important;
-  }
-
-  @include breakpoint(xmedium) {
-    text-align: center !important;
-  }
-
+  // responsive text alignment
+  @include breakpoint(tiny) { padding: 0; text-align: center !important; }
+  @include breakpoint(xsmall) { padding: 0; text-align: center !important; }
+  @include breakpoint(small) { padding: 50px 0; text-align: center !important; }
+  @include breakpoint(xmedium) { text-align: center !important; }
 }

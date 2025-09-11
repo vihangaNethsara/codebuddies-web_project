@@ -1,7 +1,7 @@
 .btn-outline {
   background-color: transparent;
-  color: inherit;
-  transition: all .5s;
+  color: #E5E5E5; // light gray
+  transition: all 0.5s;
 }
 
 .btn-default-size {
@@ -9,58 +9,68 @@
 }
 
 .btn-primary.btn-outline {
-  border-color: $cta-blue;
-  color: $cta-blue;
-  &:hover { background: $cta-blue;}
+  border-color: #FF7F50; // coral accent
+  color: #FF7F50;
+
+  &:hover {
+    background: #FF7F50;
+    color: #121212; // dark text on hover
+  }
 }
 
 .btn-full-width {
-    width: 100%;
+  width: 100%;
 }
 
 .btn-success.btn-outline {
-  color: $success-green;
+  color: #28A745; // green
+  border-color: #28A745;
+
+  &:hover { color: #121212; background: #28A745; }
 }
 
 .btn-info.btn-outline {
-  color: $info-blue;
+  color: #17A2B8; // info blue
+  border-color: #17A2B8;
+
+  &:hover { color: #121212; background: #17A2B8; }
 }
 
 .btn-warning.btn-outline {
-  color: $warning-orange;
+  color: #FFC107; // orange
+  border-color: #FFC107;
+
+  &:hover { color: #121212; background: #FFC107; }
 }
 
 .btn-danger.btn-outline {
-  color: $danger-red;
+  color: #DC3545; // red
+  border-color: #DC3545;
+
+  &:hover { color: #121212; background: #DC3545; }
 }
 
 .btn-white.btn-outline {
-  border-color: #fff;
-  color: #fff;
-}
+  border-color: #E5E5E5;
+  color: #E5E5E5;
 
-.btn-primary.btn-outline:hover,
-.btn-success.btn-outline:hover,
-.btn-info.btn-outline:hover,
-.btn-warning.btn-outline:hover,
-.btn-danger.btn-outline:hover {
-  color: $white;
+  &:hover { background: #E5E5E5; color: #121212; }
 }
 
 .btn-edit {
   display: inline-block;
   margin-top: 15px;
   padding: 6px 12px;
-  border: 1px solid $divider;
+  border: 1px solid #B0B0B0;
   border-radius: 4px;
-  color: $bg-white;
-  font-family: $open-sans;
+  color: #E5E5E5;
+  font-family: 'Open Sans', sans-serif;
   font-size: 13px;
   text-decoration: none;
 
   &:hover {
-    background: $white;
-    color: $cta-blue;
+    background: #E5E5E5;
+    color: #FF7F50;
     cursor: pointer;
   }
 }
@@ -78,8 +88,6 @@
     border-radius: 25px;
     font-size: 18px;
     height: 50px;
-    line-height: 1.33;
-    padding: 10px 16px;
     width: 50px;
   }
 
@@ -87,17 +95,15 @@
     @include border-radius(35px);
     font-size: 24px;
     height: 70px;
-    line-height: 1.33;
-    padding: 10px 16px;
     width: 70px;
   }
 }
 
 .btn-slack,
 .btn-github {
-  @include font-face(400, 15px, normal, $black);
-  background-color: $bg-white;
-  border: 2px solid $cta-blue;
+  @include font-face(400, 15px, normal, #121212);
+  background-color: #E5E5E5;
+  border: 2px solid #FF7F50;
   border-radius: 6px;
   height: 36px;
   margin-top: -8px;
@@ -105,179 +111,138 @@
 }
 
 .btn-slack-join {
-  @include font-face(400, 15px, normal, $primary-grey);
+  @include font-face(400, 15px, normal, #B0B0B0);
   @include border-radius(6px);
-  background-color: $bg-white;
+  background-color: #E5E5E5;
   height: 36px;
 }
 
 #leave-hangout {
-    background: $white;
-    color: $cta-blue;
-    border: 1px solid $cta-blue;
+  background: #E5E5E5;
+  color: #FF7F50;
+  border: 1px solid #FF7F50;
 }
 
 .btn-cb2 {
-  @include font-face(700, 15px, bold, $bg-white);
-  background-color: $cta-blue;
+  @include font-face(700, 15px, bold, #E5E5E5);
+  background-color: #FF7F50;
   display: block;
   margin: 10px auto;
-  white-space: normal;
 
-  &:hover {
-    color: $white;
-  }
+  &:hover,
+  &:focus { color: #121212; }
 
-  &:focus {
-    color: $white;
-  }
-
-  &.btn-success {
-    background: $success-green;
-  }
+  &.btn-success { background: #28A745; }
 }
 
 .btn-continue {
-    background: $success-green;
-    @include font-face(700, 18px, bold, $bg-white);
-    height: 100%;
+  background: #28A745;
+  @include font-face(700, 18px, bold, #E5E5E5);
+  height: 100%;
 }
 
 .btn-leave {
-  background: $warm-grey;
-  &:hover {
-    background: $danger-red;
-  }
+  background: #B0B0B0;
+
+  &:hover { background: #DC3545; } // danger red
 }
 
 .btn-cb3 {
-  @include font-face(700, 15px, bold, $bg-white);
-  background-color: $cta-blue;
+  @include font-face(700, 15px, bold, #E5E5E5);
+  background-color: #FF7F50;
   display: block;
   height: 36px;
   margin: 0 auto;
 
-  &:hover {
-    color: $white;
-  }
+  &:hover,
+  &:focus { color: #121212; }
 
-  &:focus {
-    color: $white;
-  }
-
-  &.btn-success {background: $success-green;}
-
+  &.btn-success { background: #28A745; }
 }
-
-#hangout-faq-popup {
-  cursor: pointer;
-}
-
 
 .btn-learning {
-  color: $white;
+  color: #E5E5E5;
 
-  &.btn-unlike {
-    color: $cta-red;
-  }
+  &.btn-unlike { color: #DC3545; }
+  &.btn-like { color: #FF7F50; }
 
-  &.btn-like {
-    color: $cta-blue;
-  }
+  &:hover { cursor: pointer; }
 }
 
-.btn-learning:hover {
-  cursor: pointer;
-}
+.delete-hangout:hover,
+.edit-hangout:hover { cursor: pointer; }
 
-.delete-hangout:hover, .edit-hangout:hover {
-  cursor: pointer;
-}
-
-.fa-comment {
-  color: $cta-blue;
-}
+.fa-comment { color: #FF7F50; }
 
 .btn-block {
-  @include font-face(700, 15px, bold, $cta-blue);
-  background: $white;
-  border: 1px solid $cta-blue;
+  @include font-face(700, 15px, bold, #FF7F50);
+  background: #E5E5E5;
+  border: 1px solid #FF7F50;
   margin-top: 10px;
+
   &:hover {
-    color: $cta-blue;
-    background: $white;
-    border: 1px solid $cta-blue;
+    color: #FF7F50;
+    background: #E5E5E5;
+    border: 1px solid #FF7F50;
     position: relative;
     top: -1px;
     left: -1px;
   }
 }
 
-li.delete-hangout, li.edit-hangout {
+li.delete-hangout,
+li.edit-hangout {
   @media (min-width: 480px) {
     border: 0;
     padding: 0;
   }
 }
 
-.delete-hangout.btn.btn-cb2.btn-danger {
-  color: $white;
+.delete-hangout.btn.btn-cb2.btn-danger { color: #E5E5E5; }
+
+#btn-load-more,
+#load-more-learnings {
+  color: #FF7F50;
+
+  &:hover { color: #121212; }
 }
 
-#btn-load-more, #load-more-learnings {
-  color: $cta-blue;
-  margin: 10px 0;
+.btn-grey { background: #B0B0B0; }
 
-  &:hover { color: $white; }
+.hangout-action-buttons .btn { display: inline-block; width: 100%; }
+
+.hangout-action-buttons-other a.btn {
+  @include font-face(200, 15px, light, #121212);
+  background: transparent;
+  border: 1px solid #121212;
+  margin: 10px 0 0 0;
 }
 
-.btn-grey {
-  background: $warm-grey;
-}
-
-.hangout-action-buttons {
-  .btn {
-    display: inline-block;
-    width: 100%;
-  }
-  .hangout-action-buttons-other {
-      a.btn {
-        @include font-face(200, 15px, light, $black);
-        background: transparent;
-        border: 1px solid $black;
-        margin: 10px 0px 0px 0px;
-      }
-  }
-}
-
-#create-hangout-popup, #createGroupButton, .btn-schedule-hangout, .btn-createGroup-notLoggedIn {
-  background: $success-green;
+#create-hangout-popup,
+#createGroupButton,
+.btn-schedule-hangout,
+.btn-createGroup-notLoggedIn {
+  background: #28A745;
   margin: 0 auto;
   max-width: 340px;
 }
-#createGroupButton, .btn-createGroup-notLoggedIn {
-  display:inline;
-  margin: 0 2%;
-  border: 1px solid white;
-}
+
+#createGroupButton,
+.btn-createGroup-notLoggedIn { display: inline; margin: 0 2%; border: 1px solid #E5E5E5; }
+
 .btn-clear {
   width: 100%;
-  @include font-face(700, 15px, light, $white);
-  background: $cta-blue;
-  border: 1px solid $white;
-  &:hover {
-    background: $cta-blue;
-    border: 1px solid $white;
-    color: $white;
-  }
+  @include font-face(700, 15px, light, #E5E5E5);
+  background: #FF7F50;
+  border: 1px solid #E5E5E5;
+
+  &:hover { background: #FF7F50; border: 1px solid #E5E5E5; color: #121212; }
 }
 
-.standard-header-btn{
-  background: $success-green;
+.standard-header-btn {
+  background: #28A745;
   margin: 0 auto;
   max-width: 340px;
 }
 
-.btn-load-more {
-    margin: 20px auto;
-}
+.btn-load-more { margin: 20px auto; }
