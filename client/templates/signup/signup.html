@@ -1,0 +1,132 @@
+<template name="signup">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title text-center">Join CodeBuddies Community</h3>
+            </div>
+            <div class="panel-body">
+              {{#if error}}
+                <div class="alert alert-danger">
+                  <i class="fa fa-exclamation-triangle"></i> {{error}}
+                </div>
+              {{/if}}
+  
+              {{#if success}}
+                <div class="alert alert-success">
+                  <i class="fa fa-check-circle"></i> {{success}}
+                </div>
+              {{/if}}
+  
+              <form class="signup-form">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="firstName">First Name *</label>
+                      <input type="text" id="firstName" class="form-control" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="lastName">Last Name *</label>
+                      <input type="text" id="lastName" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="form-group">
+                  <label for="username">Username *</label>
+                  <input type="text" id="username" class="form-control" required>
+                  <small class="help-block">Choose a unique username (3+ characters)</small>
+                </div>
+  
+                <div class="form-group">
+                  <label for="email">Email Address *</label>
+                  <input type="email" id="email" class="form-control" required>
+                </div>
+  
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="password">Password *</label>
+                      <input type="password" id="password" class="form-control" required minlength="6">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="confirmPassword">Confirm Password *</label>
+                      <input type="password" id="confirmPassword" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="programmingLevel">Programming Experience *</label>
+                      <select id="programmingLevel" class="form-control" required>
+                        <option value="">Select your level...</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="timezone">Timezone *</label>
+                      <select id="timezone" class="form-control" required>
+                        <option value="">Select timezone...</option>
+                        <option value="UTC-12:00">UTC-12:00 (Baker Island)</option>
+                        <option value="UTC-11:00">UTC-11:00 (Samoa)</option>
+                        <option value="UTC-10:00">UTC-10:00 (Hawaii)</option>
+                        <option value="UTC-09:00">UTC-09:00 (Alaska)</option>
+                        <option value="UTC-08:00">UTC-08:00 (Pacific Time)</option>
+                        <option value="UTC-07:00">UTC-07:00 (Mountain Time)</option>
+                        <option value="UTC-06:00">UTC-06:00 (Central Time)</option>
+                        <option value="UTC-05:00">UTC-05:00 (Eastern Time)</option>
+                        <option value="UTC+00:00">UTC+00:00 (GMT/London)</option>
+                        <option value="UTC+01:00">UTC+01:00 (Central Europe)</option>
+                        <option value="UTC+05:30">UTC+05:30 (India)</option>
+                        <option value="UTC+08:00">UTC+08:00 (China/Singapore)</option>
+                        <option value="UTC+09:00">UTC+09:00 (Japan)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="form-group">
+                  <label for="interests">Programming Interests</label>
+                  <input type="text" id="interests" class="form-control" 
+                         placeholder="e.g. JavaScript, Python, Web Development">
+                  <small class="help-block">Separate multiple interests with commas</small>
+                </div>
+  
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" id="agreeTerms" required>
+                      I agree to the Terms of Service and Privacy Policy
+                    </label>
+                  </div>
+                </div>
+  
+                <button type="submit" class="btn btn-primary btn-block btn-lg">
+                  {{#if isLoading}}
+                    <i class="fa fa-spinner fa-spin"></i> Creating Account...
+                  {{else}}
+                    <i class="fa fa-user-plus"></i> Join CodeBuddies
+                  {{/if}}
+                </button>
+              </form>
+  
+              <div class="text-center" style="margin-top: 20px;">
+                <p>Already have an account? <a href="/login">Sign in here</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>

@@ -1,0 +1,56 @@
+<template name="login">
+    <div class="login-page">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3">
+            <div class="login-form-container">
+              <div class="text-center mb-4">
+                <h2>Sign In to CodeBuddies</h2>
+                <p class="text-muted">Welcome back!</p>
+              </div>
+  
+              {{#if error}}
+                <div class="alert alert-danger">
+                  <i class="fa fa-exclamation-triangle"></i> {{error}}
+                </div>
+              {{/if}}
+  
+              <form class="login-form">
+                <div class="form-group">
+                  <label for="usernameOrEmail">Username or Email</label>
+                  <input type="text" id="usernameOrEmail" class="form-control" required>
+                </div>
+  
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <input type="password" id="password" class="form-control" required>
+                </div>
+  
+                <button type="submit" class="btn btn-primary btn-block btn-lg">
+                  {{#if isLoading}}
+                    <i class="fa fa-spinner fa-spin"></i> Signing In...
+                  {{else}}
+                    <i class="fa fa-sign-in-alt"></i> Sign In
+                  {{/if}}
+                </button>
+              </form>
+  
+              <div class="text-center mt-4">
+                <p>Don't have an account? <a href="/signup">Sign up here</a></p>
+              </div>
+  
+              <div class="text-center mt-3">
+                <p><strong>Or continue with:</strong></p>
+                <button class="btn btn-slack signInSlack">
+                  <img src="/images/slack-icon.png" style="width: 20px;"> Sign in with Slack
+                </button>
+                <button class="btn btn-github signInGithub">
+                  <i class="fab fa-github"></i> Sign in with GitHub
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
