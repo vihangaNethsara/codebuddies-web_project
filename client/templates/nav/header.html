@@ -102,7 +102,19 @@
             {{#unless isInRole 'admin' 'CB'}}
               <!-- notification for user-->
               <li><a href="{{pathFor 'user notification'}}"><i class="fas fa-bell" aria-hidden="true"></i> {{#if userNotificationCount}}<small><span class="badge">{{userNotificationCount}}</span></small>{{/if}} </a></li>
-              <li><a href="{{pathFor 'inbox'}}"><i class="far fa-envelope" aria-hidden="true"></i> {{#if unreadConversationCount}}<small><span class="badge">{{unreadConversationCount}}</span></small>{{/if}} </a></li>
+              <!-- <li><a href="{{pathFor 'inbox'}}"><i class="far fa-envelope" aria-hidden="true"></i> {{#if unreadConversationCount}}<small><span class="badge">{{unreadConversationCount}}</span></small>{{/if}} </a></li> -->
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <i class="far fa-envelope" aria-hidden="true"></i> 
+                  {{#if unreadConversationCount}}<small><span class="badge">{{unreadConversationCount}}</span></small>{{/if}}
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="{{pathFor 'inbox'}}"><i class="fas fa-inbox"></i> Inbox</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="{{pathFor 'reportProblem'}}"><i class="fas fa-exclamation-triangle"></i> Report Problem</a></li>
+                </ul>
+              </li>
               <!-- dropdown for user-->
               <li id="user-drop-down" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">

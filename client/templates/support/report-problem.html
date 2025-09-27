@@ -1,0 +1,166 @@
+<template name="reportProblem">
+    <div class="container report-problem-page">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          <div class="page-header">
+            <h2><i class="fas fa-exclamation-triangle"></i> Report a Problem</h2>
+            <p class="text-muted">Having trouble? Let us know and we'll help you out!</p>
+          </div>
+          
+          <button class="btn btn-danger btn-lg open-report-modal">
+            <i class="fas fa-bug"></i> Report a Problem
+          </button>
+  
+          {{#if showSuccess}}
+            <div class="alert alert-success alert-dismissible fade in" style="margin-top: 20px;">
+              <button type="button" class="close" data-dismiss="alert">
+                <span>&times;</span>
+              </button>
+              <strong>Success!</strong> Your problem report has been submitted. We'll get back to you soon!
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  
+    {{> reportProblemModal}}
+  </template>
+  
+  <!-- Report Problem Modal -->
+  <template name="reportProblemModal">
+    <div class="modal fade" id="reportProblemModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <button type="button" class="close text-white" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+            <h4 class="modal-title">
+              <i class="fas fa-exclamation-triangle"></i> Report a Problem
+            </h4>
+          </div>
+          
+          <form class="report-problem-form">
+            <div class="modal-body">
+              <!-- User Information -->
+              {{#if currentUser}}
+                <div class="user-info-panel">
+                  <h5><i class="fas fa-user"></i> Report From:</h5>
+                  <p><strong>Name:</strong> {{getUserFullName}}</p>
+                  <p><strong>Email:</strong> {{getUserEmail}}</p>
+                  <p><strong>Username:</strong> {{currentUser.username}}</p>
+                </div>
+              {{/if}}
+  
+              <!-- Problem Type -->
+              <div class="form-group">
+                <label for="problemType"><i class="fas fa-list"></i> Problem Type *</label>
+                <select class="form-control" id="problemType" name="problemType" required>
+                  <option value="">Select a problem type...</option>
+                  <option value="technical">Technical Issue</option>
+                  <option value="account">Account Problem</option>
+                  <option value="payment">Payment Issue</option>
+                  <option value="bug">Bug Report</option>
+                  <option value="feature">Feature Request</option>
+                  <option value="login">Login/Authentication Issue</option>
+                  <option value="hangout">Hangout/Study Group Issue</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+  
+              <!-- Problem Description -->
+              <div class="form-group">
+                <label for="problemDescription"><i class="fas fa-comment-alt"></i> Describe Your Problem *</label>
+                <textarea 
+                  class="form-control" 
+                  id="problemDescription" 
+                  name="problemDescription" 
+                  rows="6" 
+                  placeholder="Please describe your issue in detail..."
+                  required>Hello Admin, I need help with...</textarea>
+                <small class="form-text text-muted">
+                  Please provide as much detail as possible to help us resolve your issue quickly.
+                </small>
+              </div>
+  
+              <!-- Browser/System Information -->
+              <div class="form-group">
+                <label for="systemInfo"><i class="fas fa-desktop"></i> System Information (Optional)</label>
+                <textarea 
+                  class="form-control" 
+                  id="systemInfo" 
+                  name="systemInfo" 
+                  rows="3" 
+                  placeholder="Browser, operating system, device information..."
+                  readonly>{{getSystemInfo}}</textarea>
+                <small class="form-text text-muted">
+                  This information helps us debug technical issues.
+                </small>
+              </div>
+  
+              <!-- File Upload -->
+              <div class="form-group">
+                <label for="fileUpload"><i class="fas fa-paperclip"></i> Attach Screenshots (Optional)</label>
+                <input 
+                  type="file" 
+                  class="form-control-file" 
+                  id="fileUpload" 
+                  name="fileUpload" 
+                  accept=".jpg,.jpeg,.png,.pdf,.gif" 
+                  multiple>
+                <small class="form-text text-muted">
+                  Accepted formats: JPG, PNG, GIF, PDF (Max 5MB per file, up to 3 files)
+                </small>
+                {{#if uploadedFiles}}
+                  <div class="uploaded-files">
+                    <h6>Attached Files:</h6>
+                    {{#each uploadedFiles}}
+                      <span class="badge badge-secondary">{{name}} ({{size}})</span>
+                    {{/each}}
+                  </div>
+                {{/if}}
+              </div>
+  
+              <!-- Priority Level -->
+              <div class="form-group">
+                <label><i class="fas fa-flag"></i> Priority Level</label>
+                <div class="radio-group">
+                  <label class="radio-inline">
+                    <input type="radio" name="priority" value="low" checked> 
+                    <span class="text-success">Low</span>
+                  </label>
+                  <label class="radio-inline">
+                    <input type="radio" name="priority" value="medium"> 
+                    <span class="text-warning">Medium</span>
+                  </label>
+                  <label class="radio-inline">
+                    <input type="radio" name="priority" value="high"> 
+                    <span class="text-danger">High</span>
+                  </label>
+                  <label class="radio-inline">
+                    <input type="radio" name="priority" value="urgent"> 
+                    <span class="text-danger"><strong>Urgent</strong></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+  
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+              {{#if isSubmitting}}
+                <button type="submit" class="btn btn-danger" disabled>
+                  <i class="fas fa-spinner fa-spin"></i> Submitting...
+                </button>
+              {{else}}
+                <button type="submit" class="btn btn-danger">
+                  <i class="fas fa-paper-plane"></i> Submit Report
+                </button>
+              {{/if}}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </template>
