@@ -6,17 +6,19 @@ import "./report-problem.html";
 // Main template helpers and events
 Template.reportProblem.onCreated(function() {
   this.showSuccess = new ReactiveVar(false);
+
+  // Subscribe to user's problem reports
+  this.subscribe("problemReports");
 });
 
 Template.reportProblem.helpers({
-  showSuccess() {
+  showSuccess: function() {
     return Template.instance().showSuccess.get();
   }
 });
 
 Template.reportProblem.events({
-  "click .open-report-modal"(event, instance) {
-    event.preventDefault();
+  "click .open-report-modal": function(event, template) {
     $("#reportProblemModal").modal("show");
   }
 });
@@ -28,177 +30,91 @@ Template.reportProblemModal.onCreated(function() {
 });
 
 Template.reportProblemModal.helpers({
-  isSubmitting() {
-    return Template.instance().isSubmitting.get();
+  currentUser: function() {
+    return Meteor.user();
   },
 
-  uploadedFiles() {
-    return Template.instance().uploadedFiles.get();
+  getUserFullName: function() {
+    const user = Meteor.user();
+    if (user && user.profile) {
+      return user.profile.name || user.username || "Anonymous User";
+    }
+    return "Anonymous User";
   },
 
-  getUserEmail() {
+  getUserEmail: function() {
     const user = Meteor.user();
     if (user && user.emails && user.emails.length > 0) {
       return user.emails[0].address;
     }
-    return "No email available";
+    return "No email provided";
   },
 
-  getUserFullName() {
-    const user = Meteor.user();
-    if (user && user.profile) {
-      const firstName = user.profile.firstname || "";
-      const lastName = user.profile.lastname || "";
-      return `${firstName} ${lastName}`.trim() || "No name available";
-    }
-    return "No name available";
-  },
-
-  getSystemInfo() {
+  getSystemInfo: function() {
     const userAgent = navigator.userAgent;
     const platform = navigator.platform;
     const language = navigator.language;
-    const screenRes = `${screen.width}x${screen.height}`;
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const screenRes = screen.width + "x" + screen.height;
 
-    return `Browser: ${userAgent}
-Platform: ${platform}
-Language: ${language}
-Screen Resolution: ${screenRes}
-Timezone: ${timezone}
-URL: ${window.location.href}
-Timestamp: ${new Date().toISOString()}`;
+    return `Browser: ${userAgent}\nPlatform: ${platform}\nLanguage: ${language}\nScreen Resolution: ${screenRes}\nTimezone: ${
+      Intl.DateTimeFormat().resolvedOptions().timeZone
+    }`;
+  },
+
+  isSubmitting: function() {
+    return Template.instance().isSubmitting.get();
+  },
+
+  uploadedFiles: function() {
+    return Template.instance().uploadedFiles.get();
   }
 });
 
 Template.reportProblemModal.events({
-  "change #fileUpload"(event, instance) {
+  "change #fileUpload": function(event, template) {
     const files = event.target.files;
-    const fileArray = [];
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    const maxFiles = 3;
+    const fileList = [];
 
-    if (files.length > maxFiles) {
-      alert(`You can only upload up to ${maxFiles} files.`);
-      event.target.value = "";
-      return;
-    }
-
-    for (let i = 0; i < files.length; i++) {
+    for (let i = 0; i < files.length && i < 3; i++) {
       const file = files[i];
-
-      if (file.size > maxSize) {
-        alert(`File "${file.name}" is too large. Maximum size is 5MB.`);
-        event.target.value = "";
-        return;
-      }
-
-      fileArray.push({
-        name: file.name,
-        size: `${(file.size / 1024).toFixed(2)} KB`,
-        type: file.type
-      });
-    }
-
-    instance.uploadedFiles.set(fileArray);
-  },
-
-  "submit .report-problem-form"(event, instance) {
-    event.preventDefault();
-
-    if (instance.isSubmitting.get()) {
-      return;
-    }
-
-    const form = event.target;
-    const formData = new FormData(form);
-
-    // Get form values
-    const problemType = formData.get("problemType");
-    const problemDescription = formData.get("problemDescription").trim();
-    const systemInfo = formData.get("systemInfo");
-    const priority = formData.get("priority");
-    const files = form.fileUpload.files;
-
-    // Validation
-    if (!problemType) {
-      alert("Please select a problem type.");
-      return;
-    }
-
-    if (!problemDescription || problemDescription === "Hello Admin, I need help with...") {
-      alert("Please describe your problem.");
-      return;
-    }
-
-    instance.isSubmitting.set(true);
-
-    // Prepare report data
-    const user = Meteor.user();
-    const reportData = {
-      problemType: problemType,
-      description: problemDescription,
-      systemInfo: systemInfo,
-      priority: priority,
-      timestamp: new Date(),
-      userId: Meteor.userId(),
-      userInfo: {
-        username: user.username || "Unknown",
-        email: user.emails && user.emails[0] ? user.emails[0].address : "No email",
-        name: user.profile ? `${user.profile.firstname || ""} ${user.profile.lastname || ""}`.trim() : "No name"
-      }
-    };
-
-    // Handle file uploads (for now, just log file info)
-    if (files.length > 0) {
-      reportData.attachments = [];
-      for (let i = 0; i < files.length; i++) {
-        reportData.attachments.push({
-          name: files[i].name,
-          size: files[i].size,
-          type: files[i].type
+      if (file.size <= 5 * 1024 * 1024) {
+        // 5MB limit
+        fileList.push({
+          name: file.name,
+          size: (file.size / 1024).toFixed(1) + " KB",
+          type: file.type
         });
       }
     }
 
-    // Log the report to console
-    console.log("=== PROBLEM REPORT SUBMITTED ===");
-    console.log("Report ID:", `RPT-${Date.now()}`);
-    console.log("User:", reportData.userInfo.name, `(${reportData.userInfo.email})`);
-    console.log("Username:", reportData.userInfo.username);
-    console.log("Problem Type:", reportData.problemType);
-    console.log("Priority:", reportData.priority);
-    console.log("Description:", reportData.description);
-    console.log("System Info:", reportData.systemInfo);
-    if (reportData.attachments) {
-      console.log("Attachments:", reportData.attachments.length, "files");
-      reportData.attachments.forEach((file, index) => {
-        console.log(`  File ${index + 1}:`, file.name, `(${(file.size / 1024).toFixed(2)} KB)`);
-      });
-    }
-    console.log("Submitted at:", reportData.timestamp.toISOString());
-    console.log("================================");
+    template.uploadedFiles.set(fileList);
+  },
 
-    // Simulate API delay
-    Meteor.setTimeout(() => {
-      instance.isSubmitting.set(false);
-      $("#reportProblemModal").modal("hide");
+  "submit .report-problem-form": function(event, template) {
+    event.preventDefault();
 
-      // Show success message in parent template
-      const reportTemplate = Template.instance().view.parentView?.templateInstance();
-      if (reportTemplate && reportTemplate.showSuccess) {
-        reportTemplate.showSuccess.set(true);
+    // This is what actually sends data to the database
+    const formData = {
+      problemType: event.target.problemType.value,
+      problemDescription: event.target.problemDescription.value,
+      systemInfo: event.target.systemInfo.value,
+      priority: event.target.priority.value,
+      attachedFiles: template.uploadedFiles.get()
+    };
 
-        // Auto-hide success message after 5 seconds
-        Meteor.setTimeout(() => {
-          reportTemplate.showSuccess.set(false);
-        }, 5000);
+    // Call the Meteor method to insert into database
+    Meteor.call("problemReports.insert", formData, function(error, result) {
+      if (error) {
+        sAlert.error("Failed to submit report");
+      } else {
+        sAlert.success("Report submitted successfully!");
       }
+    });
+  },
 
-      // Reset form
-      form.reset();
-      instance.uploadedFiles.set([]);
-      $("#problemDescription").val("Hello Admin, I need help with...");
-    }, 2000); // 2-second delay to simulate API call
+  'click .close, click [data-dismiss="modal"]': function(event, template) {
+    // Reset form when modal is closed
+    template.uploadedFiles.set([]);
+    template.isSubmitting.set(false);
   }
 });
