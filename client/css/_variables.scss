@@ -2,3 +2,26 @@
 $margin-centered: 0 auto !default;
 $margin-zero: 0 !default;
 $margin-base: 10px !default;
+
+/* CSS custom properties for groups UI (dark theme tokens) */
+:root {
+	--bg: #121212;
+	--surface: #1E1E1E;
+	--muted: #9AA0A6;
+	--text: #EAEAEA;
+	--accent: #2ecc71;
+	--danger: #e74c3c;
+	--radius: 12px;
+	--transition: all 0.2s ease;
+	--header-height: 64px;
+}
+
+// SASS fallbacks (in case variables need to be referenced in SCSS)
+$cb-bg: #121212;
+$cb-surface: #1E1E1E;
+$cb-muted: #9AA0A6;
+$cb-text: #EAEAEA;
+$cb-accent: #2ecc71;
+$cb-danger: #e74c3c;
+$cb-radius: 12px;
+$cb-header-height: 64px;
