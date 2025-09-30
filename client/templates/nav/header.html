@@ -1,4 +1,3 @@
-
 <template name="header">
   {{> connectionBanner}}
   <div class="banner-notification">New: <a href="/coworking"><i class="fas fa-desktop"></i> 24/7 space for silent productivity</a></div>
@@ -150,6 +149,7 @@
                 </a>
                   <ul class="dropdown-menu" role="menu">
                     <li><a href="{{pathFor 'my study groups'}}"><i class="fas fa-users fa-fw"></i> {{_ "my_study_groups"}}</a></li>
+                    <li><a href="/profile/"><i class="fas fa-user-circle fa-fw"></i> My Profile</a></li>
                     <li><a href="/profile/{{user.username}}/{{user._id}}"><i class="fas fa-user fa-fw"></i> {{_ "profile"}}</a></li>
                     <li><a href="{{pathFor 'account' name=user.username userId=user._id}}"><i class="fas fa-cog fa-fw"></i> {{_ "settings"}}</a></li>
                     <li><a href="#" id="signOut"><i class="fas fa-sign-out-alt fa-fw"></i> {{_ "sign_out"}}</a></li>
