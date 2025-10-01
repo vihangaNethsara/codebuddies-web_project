@@ -8,34 +8,9 @@ Template.login.helpers({
 });
 
 Template.login.events({
-  "submit .login-form": function(e, template) {
-    e.preventDefault();
+  // Removed duplicate login form handler - now handled in client/helpers/auth.js
 
-    Session.set("loginError", null);
-    Session.set("loggingIn", true);
-
-    const usernameOrEmail = template.find("#usernameOrEmail").value.trim();
-    const password = template.find("#password").value;
-
-    if (!usernameOrEmail || !password) {
-      Session.set("loginError", "Please enter username/email and password");
-      Session.set("loggingIn", false);
-      return;
-    }
-
-    UserManager.login(usernameOrEmail, password, function(error, user) {
-      Session.set("loggingIn", false);
-
-      if (error) {
-        Session.set("loginError", error.reason || "Login failed");
-      } else {
-        Session.set("loginError", null);
-        FlowRouter.go("/"); // Redirect to home page
-      }
-    });
-  },
-
-  // Add existing social login handlers
+  // Social login handlers
   "click .signInSlack": function(e) {
     e.preventDefault();
     // Your existing Slack login logic

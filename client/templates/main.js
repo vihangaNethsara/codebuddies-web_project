@@ -31,7 +31,10 @@ Template.registerHelper("relativeTime", function(date) {
 });
 
 Template.registerHelper("isUserCommentAuthor", function(authorId) {
-  return Meteor.userId() === authorId ? true : false;
+  const currentUserId = Meteor.userId() || (UserManager ? UserManager.getUserId() : null);
+  const isAuthor = currentUserId === authorId;
+  console.log(`isUserCommentAuthor: User ${currentUserId} is author of comment by ${authorId}:`, isAuthor);
+  return isAuthor;
 });
 
 Template.registerHelper("totalVotes", function(upvote = 0, downvote = 0) {
@@ -110,7 +113,14 @@ Template.registerHelper("isHangoutCompleted", function(endDate) {
 });
 
 Template.registerHelper("isAttending", function(users) {
-  return users.indexOf(Meteor.userId()) != -1;
+  const currentUserId = Meteor.userId() || (UserManager ? UserManager.getUserId() : null);
+  if (!currentUserId) {
+    console.log("isAttending: No authenticated user");
+    return false;
+  }
+  const isAttending = users.indexOf(currentUserId) !== -1;
+  console.log(`isAttending: User ${currentUserId} is attending:`, isAttending);
+  return isAttending;
 });
 
 Template.registerHelper("upcomingTime", function(start) {
@@ -125,19 +135,33 @@ Template.registerHelper("isHangoutEndTimeTBA", function(start, end) {
 });
 
 Template.registerHelper("isOwnerOfTheGroup", function(userId, groupId) {
-  const loggedInUserId = Meteor.userId();
+  const loggedInUserId = Meteor.userId() || (UserManager ? UserManager.getUserId() : null);
 
-  return loggedInUserId !== userId && Roles.userIsInRole(loggedInUserId, ["owner"], groupId) ? true : false;
+  if (!loggedInUserId) {
+    console.log("isOwnerOfTheGroup: No authenticated user");
+    return false;
+  }
+
+  const isOwner = loggedInUserId !== userId && Roles.userIsInRole(loggedInUserId, ["owner"], groupId);
+  console.log(`isOwnerOfTheGroup: User ${loggedInUserId} is owner of group ${groupId}:`, isOwner);
+  return isOwner;
 });
 
 Template.registerHelper("canUpdateUserRoleForGroup", function(subjectId, groupId, subjectRole) {
-  const loggedInUserId = Meteor.userId();
+  const loggedInUserId = Meteor.userId() || (UserManager ? UserManager.getUserId() : null);
 
-  return loggedInUserId !== subjectId &&
+  if (!loggedInUserId) {
+    console.log("canUpdateUserRoleForGroup: No authenticated user");
+    return false;
+  }
+
+  const canUpdate =
+    loggedInUserId !== subjectId &&
     (subjectRole !== "owner" && subjectRole !== "admin") &&
-    Roles.userIsInRole(loggedInUserId, ["owner", "admin"], groupId)
-    ? true
-    : false;
+    Roles.userIsInRole(loggedInUserId, ["owner", "admin"], groupId);
+
+  console.log(`canUpdateUserRoleForGroup: User ${loggedInUserId} can update role for ${subjectId}:`, canUpdate);
+  return canUpdate;
 });
 
 Template.registerHelper("isOrganizers", function(role) {
@@ -146,25 +170,25 @@ Template.registerHelper("isOrganizers", function(role) {
 
 Template.registerHelper("slotDayString", function(day) {
   switch (day) {
-    case 00:
+    case 0:
       return "MON";
       break;
-    case 01:
+    case 1:
       return "TUE";
       break;
-    case 02:
+    case 2:
       return "WED";
       break;
-    case 03:
+    case 3:
       return "THU";
       break;
-    case 04:
+    case 4:
       return "FRI";
       break;
-    case 05:
+    case 5:
       return "SAT";
       break;
-    case 06:
+    case 6:
       return "SUN";
       break;
     default:
@@ -173,7 +197,10 @@ Template.registerHelper("slotDayString", function(day) {
 });
 
 Template.registerHelper("isAuthor", function(userId) {
-  return Meteor.userId() === userId;
+  const currentUserId = Meteor.userId() || (UserManager ? UserManager.getUserId() : null);
+  const isAuthor = currentUserId === userId;
+  console.log(`isAuthor: User ${currentUserId} is author of content by ${userId}:`, isAuthor);
+  return isAuthor;
 });
 
 Template.registerHelper("inList", function(list, item) {
@@ -184,10 +211,18 @@ Template.registerHelper("inList", function(list, item) {
 });
 
 Template.registerHelper("isInCollection", function(collection) {
+  const currentUserId = Meteor.userId() || (UserManager ? UserManager.getUserId() : null);
+  if (!currentUserId) {
+    console.log("isInCollection: No authenticated user");
+    return false;
+  }
+
   const actor = _.find(collection, function(item) {
-    return item.id === Meteor.userId();
+    return item.id === currentUserId;
   });
-  return actor ? true : false;
+  const isInCollection = !!actor;
+  console.log(`isInCollection: User ${currentUserId} is in collection:`, isInCollection);
+  return isInCollection;
 });
 
 Template.registerHelper("truncateIt", function(text, length) {
@@ -205,6 +240,13 @@ Template.registerHelper("relativeTimeInMinute", function(date) {
 });
 
 Template.registerHelper("exceptMe", function(id) {
-  // return _.reject(items, { 'id': Meteor.userId() });
-  return id != Meteor.userId() ? true : false;
+  const currentUserId = Meteor.userId() || (UserManager ? UserManager.getUserId() : null);
+  if (!currentUserId) {
+    console.log("exceptMe: No authenticated user");
+    return true; // Show all if not logged in
+  }
+
+  const isNotMe = id !== currentUserId;
+  console.log(`exceptMe: ID ${id} is not current user ${currentUserId}:`, isNotMe);
+  return isNotMe;
 });

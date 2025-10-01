@@ -110,7 +110,10 @@ Template.allStudyGroups.helpers({
     if (searchQuery) {
       const regex = new RegExp(searchQuery, "i");
       groups = groups.filter(
-        group => regex.test(group.title) || regex.test(group.description) || regex.test(group.tags?.join(" ") || "")
+        group =>
+          regex.test(group.title) ||
+          regex.test(group.description) ||
+          regex.test((group.tags && group.tags.join(" ")) || "")
       );
     }
 
@@ -121,10 +124,10 @@ Template.allStudyGroups.helpers({
           groups = groups.filter(g => g.activityLevel === "very-active" || g.activityLevel === "active");
           break;
         case "my":
-          groups = groups.filter(g => g.members?.includes(Meteor.userId()));
+          groups = groups.filter(g => g.members && g.members.includes(Meteor.userId()));
           break;
         case "featured":
-          groups = groups.filter(g => g.members?.length >= 10);
+          groups = groups.filter(g => g.members && g.members.length >= 10);
           break;
       }
     }

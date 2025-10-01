@@ -1,3 +1,24 @@
 <template name="adminLanding">
-  
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+    <p>Welcome to the CodeBuddies admin area.</p>
+    
+    <div class="row">
+      <div class="col-md-4">
+        <a href="{{pathFor 'stats'}}" class="btn btn-primary btn-block">
+          View Statistics
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="{{pathFor 'manage user'}}" class="btn btn-primary btn-block">
+          Manage Users
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="{{pathFor 'notifications'}}" class="btn btn-primary btn-block">
+          View Notifications
+        </a>
+      </div>
+    </div>
+  </div>
 </template>
