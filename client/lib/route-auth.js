@@ -18,20 +18,44 @@ const hasRole = function(roles, scope = "CB") {
     return false;
   }
 
-  const userId = Meteor.userId() || (UserManager ? UserManager.getUserId() : null);
+  const meteorUserId = Meteor.userId();
+  const customUserId = UserManager ? UserManager.getUserId() : null;
+  const roleArray = Array.isArray(roles) ? roles : [roles];
 
-  if (!Roles || typeof Roles.userIsInRole !== "function") {
-    console.error("hasRole: Roles package not available");
-    return false;
+  // Check Meteor Users collection first
+  if (meteorUserId && Roles && typeof Roles.userIsInRole === "function") {
+    const meteorHasRole = Roles.userIsInRole(meteorUserId, roleArray, scope);
+    console.log(
+      `Meteor role check - User: ${meteorUserId}, Roles: [${roleArray.join(", ")}], Result: ${meteorHasRole}`
+    );
+    if (meteorHasRole) return true;
   }
 
-  const roleArray = Array.isArray(roles) ? roles : [roles];
-  const hasRequiredRole = Roles.userIsInRole(userId, roleArray, scope);
+  // Check CustomUsers collection if not found in Meteor
+  if (customUserId && UserManager) {
+    const customUser = UserManager.currentUser();
+    if (customUser) {
+      // Check admin flag
+      if (roleArray.includes("admin") && customUser.isAdmin) {
+        console.log(`Custom user admin flag check - User: ${customUserId}, isAdmin: true`);
+        return true;
+      }
 
-  console.log(
-    `Route role check - User: ${userId}, Roles: [${roleArray.join(", ")}], Scope: ${scope}, Result: ${hasRequiredRole}`
-  );
-  return hasRequiredRole;
+      // Check roles array
+      if (customUser.roles && customUser.roles[scope]) {
+        const hasCustomRole = roleArray.some(role => customUser.roles[scope].includes(role));
+        console.log(
+          `Custom user role check - User: ${customUserId}, Roles: [${roleArray.join(", ")}], CustomRoles: ${
+            customUser.roles[scope]
+          }, Result: ${hasCustomRole}`
+        );
+        return hasCustomRole;
+      }
+    }
+  }
+
+  console.log(`Role check failed - User not found in any system or insufficient permissions`);
+  return false;
 };
 
 // Authentication trigger for routes that require login
