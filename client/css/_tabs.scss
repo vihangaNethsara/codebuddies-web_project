@@ -7,6 +7,7 @@
   ul.nav.nav-tabs {
     display: table;
     width: 100%;
+    border-bottom: 1px solid $divider;
   }
 
   ul.nav.nav-tabs > li {
@@ -19,25 +20,29 @@
     margin: 0;
     @include font-face(400, 16px, normal, $inactive);
     padding: 1rem 0.8rem;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+
+    &:hover {
+      color: $cta-blue;
+      background-color: $bg-white;
+      cursor: pointer;
+    }
   }
 
   ul.nav.nav-tabs > li.active > a {
     margin: 0;
     @include font-face(700, 16px, bold, $primary-grey);
-  }
-
-  ul.nav.nav-tabs > li > a:hover {
-    text-align: center;
-    background-color: $bg-white;
+    border-bottom: 3px solid $cta-blue; // accent underline for active tab
   }
 }
 
 .tab-content {
-  &.status-fields {
-    margin: 0;
-  }
-
+  &.status-fields,
   &.status-data {
     margin: 0;
+    background: $bg-white;
+    padding: 15px;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   }
 }

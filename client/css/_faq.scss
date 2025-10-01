@@ -1,37 +1,49 @@
 #faq {
   p, li {
-    @include font-face(400, 16px, normal, $primary-grey);
+    @include font-face(400, 16px, normal, $primary-grey); // light gray text
     line-height: 27px;
   }
 
   .flags img {
     @include border-radius(3px);
     width: 51px;
+    border: 1px solid $secondary-grey; // subtle modern border
   }
 
   .faq-top {
-    background: linear-gradient(to top, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .55) 18%, rgba(30, 144, 255, .64) 46%, rgba(3, 87, 232, .8) 100%), url(/images/language-logos.svg) center repeat;
+    background: linear-gradient(
+      to top,
+      rgba(255,127,80,0.5) 0%,
+      rgba(255,127,80,0.55) 18%,
+      rgba(255,127,80,0.64) 46%,
+      rgba(255,127,80,0.8) 100%
+    ),
+    url(/images/language-logos.svg) center repeat;
     padding: 100px 0;
-    h2 { @include font-face(700, 32px, bold, $bg-white); }
+
+    h2 {
+      @include font-face(700, 32px, bold, $white); // light gray text
+      text-align: center;
+    }
   }
 
   .faq-middle {
-    background: $bg-white;
+    background: $bg-white; // card background dark
     padding: 50px 0;
   }
 
   .faq-hangout {
-    background: $bg-lightgrey;
+    background: $bg-lightgrey; // dark gray section
     padding: 100px 0;
   }
 
   .divider {
     border-top: 1px solid $secondary-grey;
-    opacity: .2;
+    opacity: 0.2;
   }
 
   .faq-bottom {
-    background: $bg-white;
+    background: $bg-white; // card background
     padding: 50px 0;
   }
 
@@ -40,12 +52,18 @@
   }
 
   a.user-popover {
-    .popover { margin-top: -10px;}
+    .popover {
+      margin-top: -10px;
+      background: $bg-white;
+      color: $primary-grey;
+      border: 1px solid $cta-blue; // coral accent
+    }
+
     .popover:hover {
       cursor: default;
     }
   }
 
-  h3.popover-title { margin-top: 0;}
-  h3 { font-weight: 200;}
+  h3.popover-title { margin-top: 0; }
+  h3 { font-weight: 200; color: $primary-grey; }
 }

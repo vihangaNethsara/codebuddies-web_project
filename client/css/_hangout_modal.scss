@@ -1,31 +1,40 @@
+// Modal backdrop
 .modal-backdrop {
-  background-color: $cta-blue;
+  background-color: $cta-blue; // coral accent
 }
 
+// Create Hangout Modal
 #create-hangout-modal {
   z-index: 1050;
+
   h4 {
     @include font-face(700, 20px, bold, $black);
   }
+
   #external label {
     font-weight: 400;
+    color: $primary-grey;
   }
 }
 
+// Study Group Modal
 .modal.study-group {
   h2 {
     margin: 0;
   }
+
   h3, label {
     text-transform: uppercase;
-    margin: 20px 0px 10px 0px;
+    margin: 20px 0 10px 0;
     @include font-face(700, 14px, bold, $black);
   }
 }
 
+// Common Modals: Clone, Create, Edit
 #clone-hangout-modal,
 #create-hangout-modal,
 #edit-hangout-modal {
+
   .modal-dialog {
     width: 800px;
   }
@@ -39,7 +48,8 @@
   #start-date-time,
   #topic {
     border: 0;
-    background-color: $bg-lightgrey;
+    background-color: $bg-lightgrey; // subtle dark section
+    color: $white;
   }
 
   #description {
@@ -49,15 +59,13 @@
 
   .input-group-addon {
     border: 0;
-    color: $cta-blue;
+    color: $cta-blue; // coral accent
     font-size: 18px;
     background-color: $bg-lightgrey;
   }
 
-  .btn-group-vertical {
-    label {
-      padding: 0;
-    }
+  .btn-group-vertical label {
+    padding: 0;
   }
 
   .descriptionHide {
@@ -65,17 +73,9 @@
     margin-top: 10px;
     color: $kudo;
 
-    &#d1 {
-      border: 1px solid $hangout-silent;
-    }
-
-    &#d2 {
-      border: 1px solid $hangout-teaching;
-    }
-
-    &#d3 {
-      border: 1px solid $hangout-collab;
-    }
+    &#d1 { border: 1px solid $hangout-silent; }   // red
+    &#d2 { border: 1px solid $hangout-teaching; } // coral
+    &#d3 { border: 1px solid $hangout-collab; }   // green
   }
 
   .message {
@@ -86,5 +86,9 @@
     width: 100%;
     padding: 10px;
     min-height: 150px;
+    background-color: $bg-lightgrey;
+    color: $white;
+    border-radius: 4px;
+    font-family: $open-sans;
   }
 }

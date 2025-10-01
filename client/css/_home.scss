@@ -1,26 +1,26 @@
 #home {
-  background: #121212; // dark base
+  background: $black; // dark base
 
   // ---------------------------
-  // Hero
+  // Hero Section
   // ---------------------------
   .home-top {
     padding: 80px 20px;
-    background: linear-gradient(135deg, #121212, #1F1F1F); // dark gray gradient
-    color: #E5E5E5; // light text
+    background: linear-gradient(135deg, $black, $well); // dark gray gradient
+    color: $white;
     text-align: center;
 
     h2 {
       font-size: 2.5rem;
       font-weight: 800;
       margin-bottom: 20px;
-      color: #E5E5E5;
+      color: $white;
     }
 
     p {
       font-size: 1.1rem;
       line-height: 1.7;
-      color: rgba(229, 229, 229, 0.85);
+      color: rgba($white, 0.85);
       max-width: 700px;
       margin: 0 auto;
     }
@@ -35,8 +35,8 @@
 
       a.link {
         display: inline-block;
-        background: #FF7F50; // coral button
-        color: #121212; // dark text
+        background: $cta-blue;
+        color: $black;
         padding: 12px 28px;
         border-radius: 50px;
         font-weight: 700;
@@ -45,7 +45,7 @@
         box-shadow: 0 6px 15px rgba(255,127,80,0.3);
 
         &:hover {
-          background: #FF6347; // darker coral hover
+          background: $cta-red;
           transform: translateY(-3px);
           box-shadow: 0 8px 20px rgba(255,99,71,0.4);
         }
@@ -54,7 +54,7 @@
   }
 
   // ---------------------------
-  // Stats
+  // Stats Section
   // ---------------------------
   .statistic-row {
     display: grid;
@@ -63,30 +63,30 @@
     margin: 60px auto;
     max-width: 1000px;
     padding: 0 20px;
-  }
 
-  .statistic-circle {
-    border-radius: 15px;
-    background: #1F1F1F; // card dark gray
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    padding: 30px 20px;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .statistic-circle {
+      border-radius: 15px;
+      background: $well;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      padding: 30px 20px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
 
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(255,127,80,0.4); // subtle coral glow
-    }
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(255,127,80,0.4);
+      }
 
-    .total {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #FF7F50; // accent color
-    }
+      .total {
+        font-size: 2rem;
+        font-weight: 700;
+        color: $cta-blue;
+      }
 
-    .category {
-      font-size: 1rem;
-      color: #B0B0B0; // mid gray text
+      .category {
+        font-size: 1rem;
+        color: $secondary-grey;
+      }
     }
   }
 
@@ -94,19 +94,19 @@
   // Middle Section
   // ---------------------------
   .home-middle {
-    background: #121212;
+    background: $black;
     padding: 80px 20px;
     text-align: center;
 
     h2 {
       font-size: 2rem;
       margin-bottom: 20px;
-      color: #E5E5E5;
+      color: $white;
     }
 
     p {
       font-size: 1.05rem;
-      color: #B0B0B0;
+      color: $secondary-grey;
       margin-bottom: 40px;
       max-width: 700px;
       margin-left: auto;
@@ -114,7 +114,7 @@
     }
 
     .hangout-card-homepage {
-      background: #1F1F1F; // card dark
+      background: $well;
       border-radius: 15px;
       box-shadow: 0 6px 25px rgba(0,0,0,0.5);
       padding: 25px;
@@ -123,18 +123,18 @@
 
       &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(255,127,80,0.3); // soft accent glow
+        box-shadow: 0 10px 30px rgba(255,127,80,0.3);
       }
 
       h3 {
         font-weight: 700;
         margin: 15px 0;
-        color: #FF7F50; // coral headings
+        color: $cta-blue;
       }
 
       p {
         font-size: 0.95rem;
-        color: #E5E5E5;
+        color: $white;
       }
     }
   }
@@ -151,19 +151,19 @@
       font-size: 2rem;
       font-weight: 700;
       margin-bottom: 30px;
-      color: #E5E5E5;
+      color: $white;
     }
 
     p {
       font-size: 1rem;
-      color: #B0B0B0;
+      color: $secondary-grey;
       line-height: 1.7;
       max-width: 650px;
       margin: 0 auto 30px;
     }
 
     .testimonial-bubble {
-      background: #1F1F1F; // card dark
+      background: $well;
       border-radius: 15px;
       box-shadow: 0 6px 25px rgba(0,0,0,0.4);
       padding: 25px;
@@ -174,22 +174,22 @@
       strong {
         display: block;
         margin-top: 10px;
-        color: #FF7F50; // accent color
+        color: $cta-blue;
       }
     }
 
     a.link {
       display: inline-block;
       margin-top: 20px;
-      background: #FF7F50; // coral button
-      color: #121212;
+      background: $cta-blue;
+      color: $black;
       padding: 12px 28px;
       border-radius: 50px;
       font-weight: 700;
       transition: all 0.3s ease;
 
       &:hover {
-        background: #FF6347;
+        background: $cta-red;
         transform: translateY(-2px);
       }
     }
@@ -199,32 +199,18 @@
   // Responsive Rules
   // ---------------------------
   @media (max-width: 600px) {
-    .home-top h2 {
-      font-size: 1.8rem;
-    }
-    .home-top p {
-      font-size: 1rem;
-    }
-    .statistic-row {
-      gap: 15px;
-    }
-    .hangout-card-homepage {
-      padding: 20px;
-    }
+    .home-top h2 { font-size: 1.8rem; }
+    .home-top p { font-size: 1rem; }
+    .statistic-row { gap: 15px; }
+    .hangout-card-homepage { padding: 20px; }
   }
 
   @media (min-width: 601px) and (max-width: 1024px) {
-    .home-top h2 {
-      font-size: 2.2rem;
-    }
-    .statistic-row {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    .home-top h2 { font-size: 2.2rem; }
+    .statistic-row { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (min-width: 1025px) {
-    .home-top h2 {
-      font-size: 2.8rem;
-    }
+    .home-top h2 { font-size: 2.8rem; }
   }
 }

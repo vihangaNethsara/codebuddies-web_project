@@ -1,60 +1,65 @@
 .discussion {
-  background-color: #ECF0F1;
+  background-color: $bg-lightgrey; // dark gray background
+
   .discussion-card {
-    background-color: #FFFFFF;
-    margin: 20px 0 20px;
+    //background-color: $bg-white; // card background
+    margin: 20px 0;
     padding: 10px;
+    color: $white;
   }
+
   h3 {
     margin: 20px 0 10px;
-    size: 18 px;
     font-family: 'Open Sans', sans-serif;
     font-weight: 400;
     line-height: 1.1;
-    color: #363838;
+    color: $primary-grey; // light gray text
   }
+
   .author-avatar {
     width: 50px;
     margin-top: 10px;
+    border-radius: 50%;
   }
+
   .upvoted {
-    color: #2ABB9C;
+    color: $hangout-collab; // green
   }
+
   .downvoted {
-    color: #D97A7B;
+    color: $hangout-silent; // red
   }
 
   .description-text {
-    font-size:15px;
+    font-size: 15px;
     margin-top: 35px;
     font-family: 'Open Sans Light', sans-serif;
-    text-align:justify;
-    color: #989c9e;
+    text-align: justify;
+    color: $secondary-grey; // medium gray text
     line-height: 25px;
     min-height: 100px;
   }
 
   .discussion-sidebar {
-    background-color: #FFFFFF;
-    margin: 20px 0 20px;
+    //background-color: $bg-white; // card background
+    margin: 20px 0;
     padding: 20px;
+
     h5 {
-      margin: 10px 0 10px;
-      size: 18 px;
+      margin: 10px 0;
       font-family: 'Open Sans', sans-serif;
       font-weight: 400;
       line-height: 1.1;
-      color: #363838;
+      color: $primary-grey;
     }
-
   }
-
-
 }
 
 .preview-pane {
   padding: 6px 12px;
 }
+
 p {
   overflow-wrap: break-word;
+  color: $primary-grey;
 }

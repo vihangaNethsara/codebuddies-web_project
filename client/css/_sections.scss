@@ -1,28 +1,93 @@
+// ==========================
+// Section Header Theme
+// ==========================
 %default-header-background {
   background: linear-gradient(
-    to top,
-    rgba(30, 144, 255, 0.5) 0%,
-    rgba(3, 87, 232, 0.8) 100%),
+      to top,
+      rgba(255,127,80,0.5) 0%,
+      rgba(255,127,80,0.5) 100%
+    ),
     url(/images/language-logos.svg) center repeat;
+  background-size: cover, auto;
+//  background-color: rgb(49, 49, 49);
 }
 
 .section-header {
   @extend %default-header-background;
   padding: 30px 0;
-  color: #fff;
+  color: $black;
   font-size: 18px;
   text-align: center;
 
   & .btn {
-    color: #fff;
+    color: $white;
     font-size: 16px;
     font-weight: bold;
+    background: $cta-blue;
+    border-radius: 6px;
+    padding: 8px 20px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: darken($cta-blue, 10%);
+      cursor: pointer;
+    }
   }
 
-  & .btn-outline { border: 1px solid #fff; }
+  & .btn-outline {
+    border: 1px solid $white;
+    background: transparent;
+
+    &:hover {
+      background: rgba($black, 0.15);
+      color: $white;
+    }
+  }
 }
 
+// ==========================
+// Section Body Theme
+// ==========================
 .section-body {
   margin-top: 3em;
   margin-bottom: 3em;
+  color: $primary-grey;
+  font-family: $open-sans;
+  background-color: black;
+  p, li {
+    line-height: 1.7;
+    @include font-face(400, 16px, normal, $primary-grey);
+  }
+
+  a {
+    color: $cta-blue;
+    text-decoration: underline;
+
+    &:hover {
+      color: darken($cta-blue, 10%);
+    }
+  }
+}
+
+// ==========================
+// Responsive
+// ==========================
+@media (max-width: 768px) {
+  .section-header {
+    font-size: 16px;
+    padding: 20px 0;
+
+    & .btn {
+      font-size: 14px;
+      padding: 6px 15px;
+    }
+  }
+
+  .section-body {
+    margin: 2em 1em;
+
+    p, li {
+      font-size: 14px;
+    }
+  }
 }

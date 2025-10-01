@@ -1,0 +1,847 @@
+<!-- Main Hangout Template -->
+<template name="hangout">
+  <div id="post" class="container-fluid">
+    <div id="show-sidebar">
+        <a href="#">Show details</a>
+    </div>
+    <div class="row">
+      {{#if Template.subscriptionsReady}}
+        {{#with hangout}}
+          <!-- hangout sidebar -->
+          <div class="col-md-3 well hangout-sidebar">
+            <h2 class="{{# if isHangoutCompleted end }}completed{{/if}}" id="hangout-topic">
+              {{#if equals visibility false}}
+                <span class="label label-pill label-danger">DELETED</span>
+              {{/if}}
+              <!-- close sidebar -->
+              <div id="hide-sidebar">
+                <a href="#" class="pull-right"><i class="fas fa-times-circle" aria-hidden="true"></i></a>
+              </div>
+
+              {{#if isHangoutInProgress start end}} <h5 class="in-progress"><span class="oval"></span> LIVE</h5> {{/if}}
+
+              {{topic}}
+
+              {{#if views}} <span class="view"><i class="fas fa-eye" aria-hidden="true" data-toggle="tooltip" title="Views" > </i> {{views}}</span> {{/if}}
+            </h2>
+
+            <!-- hangout group -->
+            {{#if group}}
+              <p><a href="{{pathFor 'study group' studyGroupSlug=group.slug studyGroupId=group.id}}"> <span class="label label-default">{{group.title}}</span></a></p>
+            {{/if}}
+            
+            <!-- hangout type host -->
+            <p class="status">
+              <i class="fas {{getHangoutTypeSign type}}"></i> {{type}} hangout <sup><a id="hangout-faq-popup"><i class="fas fa-question-circle"></i></a></sup> started by
+              <a href="{{#if currentUser}} {{pathFor 'profile' name=host.name userId=host.id}} {{/if}}" class="{{#unless currentUser}} continue-popup {{/unless}}">{{host.name}}</a>
+            </p>
+
+            <!--  hangout date time -->
+            <p class="date-holder">
+              <i class="fas fa-clock" aria-hidden="true"></i>
+              <strong>{{getHangoutStartDateDay start}}</strong>
+              <br />
+              {{getHangoutStartTime start}} -
+              {{#if isHangoutEndTimeTBA start end}}
+                  TBA (End Manually)
+              {{else}}
+                  {{getHangoutEndTime end}}
+              {{/if}}
+            </p>
+            
+            <!-- hangout actions buttons -->
+            {{> hangoutActionButtons }}
+
+            <!-- Participants -->
+            <h3>Participants</h3>
+            <div id="participants">
+              <a href="{{#if currentUser}} {{pathFor 'profile' name=host.name userId=host.id}} {{/if}}" class="{{#unless currentUser}} continue-popup {{/unless}}"><img class="img-circle" src="{{host.avatar}}"></a>
+              {{#each attendees}}
+                <a href="{{#if currentUser}} {{pathFor 'profile' name=name userId=id}} {{/if}}" class="{{#unless currentUser}} continue-popup {{/unless}}" ><img class="img-circle" src="{{avatar}}"></a>
+              {{/each}}
+            </div>
+
+            <!--HANGOUT ALTERNATIVES-->
+            {{> hangoutSidebarAlternatives}}
+
+            <!-- HANGOUT TIPS -->
+            {{> hangoutSidebarTips}}
+          </div>
+
+          <!-- hangout main container-->
+          <div class="col-md-9 hangout-body">
+            {{# unless isHangoutCompleted end}}
+              <p class="upcoming align-center margin-top-1 load-hangout">
+                  <i class="fas fa-dot-circle fa text-danger faa-burst animated"></i>{{upcomingTime start}}
+              </p>
+            {{ else }}
+              <p class="upcoming align-center margin-top-1">Sorry, this hangout has ended.</p>
+            {{/unless}}
+
+            {{#if isAttending users}}
+               {{# if externalCheckbox }}
+                 <a href="{{externalURL}}" class="btn btn-cb2 margin-top-1" rel="noopener" target="_blank">Join us on {{externalButtonText}} <i class="fas fa-external-link-alt fa-fw" aria-hidden="true"></i></a>
+               {{ else }}
+                  {{> hangoutFrame }}
+               {{/if}}
+            {{ else }}
+              {{# if externalCheckbox }}
+                <a href="{{externalURL}}" class="btn btn-cb2 margin-top-1" rel="noopener" target="_blank">Join us on {{externalButtonText}} <i class="fas fa-external-link-alt fa-fw" aria-hidden="true"></i></a>
+              {{ else }}
+                  <a class="{{#if currentUser}}{{# unless isHangoutCompleted end}} join-hangout {{/unless }} {{else}} continue-popup {{/if}}"><img src="/images/logo-circle-cropped.png" width="65%" class="load-hangout-screenshot display-block centered margin-top-1"/></a>
+              {{/if}}
+            {{/if}}
+
+            {{> supportHangoutOrganizer organizerId=host.id}}
+            <h3>Goals of hangout {{> hangoutActionBar }}</h3>
+            <p id="hangout-description" class="margin-1">
+              {{{formatDescription this}}}
+            </p>
+            
+            <!-- list of learnings for this hangout-->
+            {{> hangoutLearnings }}
+            
+            <!-- accept learnings here-->
+            {{> hangoutLearned }}
+            
+            <!-- comment section -->
+            <h3>Comments</h3>
+            {{> commentBox}}
+          </div>
+        {{else}}
+          {{> hangoutNotFound}}
+        {{/with}}
+      {{else}}
+        {{> loading}}
+      {{/if}}
+    </div>
+  </div>
+</template>
+
+<!-- Hangout Cards Template -->
+<template name="hangoutCards">
+  
+  <div class="centered-content-area">
+
+    {{#if liveHangoutsCount }}
+      <h3 class="hangouts-title">{{_ "upcoming_events"}}</h3>
+    {{/if}}
+
+    <div id="active_hangouts">
+      {{#each hangouts 1}}
+        {{#unless isHangoutCompleted end}}
+        <div class="card">
+          {{> hangoutCard}}
+        </div>
+        {{/unless}}
+      {{/each}}
+    </div>
+
+    {{#if pastHangoutsCount }}
+      <h3 class="hangouts-title">{{_ "past_events"}}</h3>
+    {{/if}}
+
+    <div id="past_hangouts">
+      {{#each hangouts -1}}
+        {{#if isHangoutCompleted end}}
+         <div class="card">
+           {{> hangoutCard}}
+        </div>
+        {{/if}}
+      {{/each}}
+    </div>
+
+    {{#unless status}}
+      <div class="clear">
+        <button id="loadMore" class="btn btn-default btn-block">Load More</button>
+      </div>
+    {{else}}
+        <h5 class="align-center color-white">There are no more hangouts.</h5>
+    {{/unless}}
+
+  </div>
+  {{#unless Template.subscriptionsReady}}
+    {{> loading}}
+  {{/unless}}
+</template>
+
+
+<!-- Hangout Card Template -->
+<template name="hangoutCard">
+  <a href="{{pathFor 'hangout' hangoutId=_id }}"
+    class="hangout-card {{#if isHangoutCompleted end }}completed{{/if}}"
+    data-toggle="popover"
+    data-placement="top"
+    data-content="{{ getDescriptionTruncated description }}"
+  >
+      <div class="card-header-wrapper">
+        <div class="left-section">
+          {{#if group}}
+            <a class="hangout-title-tag" href="{{pathFor 'study group' studyGroupSlug=group.slug studyGroupId=group.id}}">
+                {{group.title}}
+            </a>
+          {{/if}}
+        </div>
+        <div class="right-section">
+          <i class="icon-spacing info-icon fas fa-info-circle"></i>
+          <i class="icon-spacing fas {{getHangoutTypeSign type}}"></i>
+          {{> hangoutActionBar}}
+        </div>
+      </div>
+
+      <div class="card-details">
+        <h4 class="hangout-topic {{#if isHangoutCompleted end }}completed{{/if}}">{{#if isHangoutCompleted end }}<i class="fas fa-check"
+            aria-hidden="true"></i>{{/if}} {{truncate topic}}</h4>
+
+        {{#if isHangoutInProgress start end}}
+        <h5 class="in-progress"><span class="oval"></span> LIVE NOW</h5>
+        {{/if}}
+
+        <h4 class="hangout-date {{#if isHangoutCompleted end }}completed{{/if}} {{#if isHangoutInProgress start end }}hide-date{{/if}}">
+          {{getHangoutStartDateDay start}}
+        </h4>
+        <h4 class="hangout-date {{#if isHangoutCompleted end }}completed{{/if}} {{#if isHangoutInProgress start end}}hangout-in-progress-time{{/if}}">
+          {{#if isHangoutInProgress start end}}
+           Started at
+          {{/if}}
+          {{getHangoutStartTime start}}
+        </h4>
+
+        {{# unless isHangoutCompleted end}}
+        {{#unless isHangoutInProgress start end}}
+          <p class="upcoming">{{#if equals visibility false}}{{_ "deleted"}}{{else}}{{upcomingTime start}}{{/if}}</p>
+        {{/unless}}
+        {{ else }}
+        <h5 class="hangout-date completed show-on-hover">{{_ "completed"}}</h5>
+        {{/unless}}
+    </div>
+
+      <div class="rsvp-buttons align-center">
+        {{# unless isHangoutCompleted end}}
+          {{#if isHangoutInProgress start end}}
+            {{#if isAttending users}}
+                <!-- <a class="btn btn-cb2 btn-grey btn-success join-now" href="{{pathFor 'hangout' hangoutId=_id }}">{{_ "launch"}}</a> -->
+            {{else}}
+              {{# unless isHangoutCompleted end}}
+                <button class="btn btn-cb2 join-hangout {{#unless currentUser}} continue-popup {{/unless}}">{{_ "join_in_session"}}</button>
+              {{/unless}}
+            {{/if}}
+          {{else}}
+            {{#if isAttending users}}
+              <button id="leave-hangout" class="btn btn-cb2 align-center">{{_ "leave"}}</button>
+            {{else}}
+              {{# unless isHangoutCompleted end}}
+                <button class="btn btn-cb2 {{#if currentUser}} join-hangout {{else}} continue-popup {{/if}}">{{_ "rsvp"}}</button>
+              {{/unless}}
+            {{/if}}
+          {{/if}}
+        {{/unless}}
+      </div>
+    </a>
+</template>
+
+<!-- Hangout Item Template -->
+<template name="hangoutItem">
+  <div class="hangout-item">
+    <div class="row">
+      <div class="col-md-12">
+        <label class="name">
+        {{#if isHangoutInProgress start end}}
+          &nbsp; &nbsp;<i class="fas fa-dot-circle fa text-danger faa-burst animated"></i> &nbsp;
+          <a href="{{pathFor 'hangout' hangoutId=_id }}" class="hangout-topic {{# if isHangoutCompleted end }}completed{{/if}}"> {{topic}} </a>
+        {{ else }}
+          <a href="{{pathFor 'hangout' hangoutId=_id }}" class="hangout-topic {{# if isHangoutCompleted end }}completed{{/if}}"> {{topic}} </a>
+        {{/if}}
+        </label>
+        {{> hangoutActionBar}}
+      </div>
+
+      <div class="col-md-4">
+      {{!-- Group Label --}}
+      {{#if group}}<p><a href="{{pathFor 'study group' studyGroupSlug=group.slug studyGroupId=group.id}}"> <span class="label label-default pull-right">{{group.title}}</span> </a>  </p>{{/if}}
+
+        {{#if equals visibility false}}
+          <span class="label label-pill label-danger">DELETED</span>
+        {{else}}
+          {{# unless isHangoutCompleted end }}
+            {{#if isHangoutInProgress start end}}
+              {{#if isAttending users}}
+                  <a class="btn btn-cb2 btn-grey btn-success" href="{{pathFor 'hangout' hangoutId=_id }}">{{_ "launch"}}</a>
+              {{else}}
+                {{# unless isHangoutCompleted end}}
+                  <button class="btn btn-cb2 join-hangout {{#unless currentUser}} continue-popup {{/unless}}">{{_ "join_in_session"}}</button>
+                {{/unless}}
+              {{/if}}
+            {{else}}
+              {{#if isAttending users}}
+                <p class="upcoming">{{upcomingTime start}}</p>
+                <a id="leave-hangout" class="btn btn-cb2 btn-leave">{{_ "leave"}}</a>
+              {{else}}
+                {{# unless isHangoutCompleted end}}
+                  <button class="btn btn-cb2 {{#if currentUser}} join-hangout {{else}} continue-popup {{/if}}">{{_ "rsvp"}}</button>
+                {{/unless}}
+              {{/if}}
+            {{/if}}
+          {{else}}
+            <p class="completed"><i class="fas fa-check" aria-hidden="true"></i> {{_ "completed"}}</p>
+          {{/unless}}
+        {{/if}}
+    </div>
+
+    <div class="col-md-8">
+      <p class="status"><label><i class="fas {{getHangoutTypeSign type}}"></i> Started by <a href="{{pathFor 'profile' name=host.name userId=host.id}}" class="{{#unless currentUser}} continue-popup {{/unless}}">{{host.name}}</a></label></p>
+      <p class="status"><label><i class="fas fa-calendar-alt fa-lg"></i> {{getHangoutStartDateTime start}} -
+        {{#if isHangoutEndTimeTBA start end}}
+          To Be Announced
+        {{else}}
+          {{getHangoutEndDateTime end}}
+        {{/if}}
+          |
+         {{users.length}} Joined  {{#if views}} | <i class="fas fa-eye" aria-hidden="true" data-toggle="tooltip" title="Views" ></i> {{views}} {{/if}}</label> </p>
+      <p class="overflowtext">{{ getDescriptionTruncated description }}</p>
+    </div>
+  </div>
+  </div>
+</template>
+
+<!-- Hangout Action Buttons Template -->
+<template name="hangoutActionButtons">
+  <div class="hangout-action-buttons">
+    {{# unless isHangoutCompleted end }}
+      <a href="{{ googleCalendarUrl this }}" rel="noopener" target="_blank" class="btn btn-block"><i class="fas fa-calendar-alt" aria-hidden="true"></i> {{_ "add_google_calendar"}}</a>
+      <a href="{{ icsDownloadLink this }}" download="hangout.ics" class="btn btn-block"><i class="fas fa-calendar-alt" aria-hidden="true"></i>{{_ "add_to_icalendar"}}</a>
+    {{/ unless }}
+
+    {{# unless isHangoutCompleted end }}
+          {{#if isAttending users}}
+            <div id="attendance">
+              <a id="leave-hangout" class="btn btn-cb2">{{_ "leave"}}</a>
+            </div>
+          {{else}}
+              {{# unless isHangoutCompleted end}}
+                  <button class="btn btn-cb2 {{#if currentUser}} join-hangout {{else}} continue-popup {{/if}}">{{_ "rsvp_long"}}</button>
+              {{/unless}}
+          {{/if}}
+    {{ else }}
+      <div class="completed align-center margin-top-1">
+        {{#if isAttending users}}
+            <p>Thanks for joining! This hangout has ended. Would you like to start another one?</p> <div class="btn btn-cb2 margin-top-1 {{#unless currentUser}} continue-popup  {{else}} create-hangout-popup {{/unless}}"> {{_ "create_a_hangout"}} </div>
+        {{else}}
+            <p>Sorry, this hangout has ended. Why not start your own?</p>
+            <div class="btn btn-cb2 margin-top-1 btn-schedule-hangout {{#unless currentUser}} continue-popup {{else}} create-hangout-popup {{/unless}}">
+              {{_ "create_a_hangout"}}
+            </div>
+        {{/if}}
+      </div>
+    {{/ unless }}
+
+  <div class="hangout-action-buttons-other">
+    <a href="#" class="{{#if currentUser}} clone-hangout {{else}} continue-popup {{/if}} btn btn-cb2"><i class="fas fa-clone" aria-hidden="true"></i> Duplicate</a>
+    {{#if hangoutOwner host.id}}
+      <a href="#" class="edit-hangout btn btn-cb2">Edit Details</a>
+      <a href="#" class="delete-hangout btn btn-cb2"><i class="fas fa-trash-alt" aria-hidden="true"></i> Cancel Hangout</a>
+    {{else}}
+      {{#if isInRole 'admin,moderator,volunteer' 'CB'}}
+          <a href="#" class="edit-hangout btn btn-cb2">Edit Details <span class="label label-info">M</span> </a>
+      {{/if}}
+      {{#if isInRole 'admin,moderator' 'CB'}}
+        <a href="#" class="delete-hangout btn btn-cb2 btn-danger"><i class="fas fa-trash-alt" aria-hidden="true"></i>&nbsp; Delete <span class="label label-info">M</span> </a>
+      {{/if}}
+    {{/if}}
+  </div>
+
+  {{#if isHangoutInProgress start end}}
+      {{#if hangoutOwner host.id}}
+          <div class="hangout-action-buttons"><div id="end-hangout" class="btn btn-cb2 btn-danger">{{_ "end_hangout"}}</div></div>
+      {{else}}
+          {{#if isInRole 'admin,moderator,volunteer' 'CB'}}
+              <div class="hangout-action-buttons"><div id="end-hangout" class="btn btn-cb2 btn-danger">{{_ 'end_hangout'}}</div></div>
+          {{/if}}
+      {{/if}}
+  {{/if}}
+</div>
+</template>
+
+<!-- Hangout Action Bar Template -->
+<template name="hangoutActionBar">
+  <div class="dropdown pull-right icon-spacing">
+    <button class="btn btn-default"
+            type="button"
+            id="dropdownMenu1"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="true">
+      <span>
+        <i class="fas fa-ellipsis-v" aria-hidden="true">
+        </i>
+      </span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        {{#unless hangoutOwner host.id}}
+          <li class="{{#if currentUser}} report-hangout {{else}} continue-popup {{/if}} ">
+            <a href="#">
+              Report
+            </a>
+          </li>
+        {{/unless}}
+        <li class="{{#if currentUser}} clone-hangout {{else}} continue-popup {{/if}}">
+          <a href="#">
+            Duplicate
+          </a>
+        </li>
+        {{#if hangoutOwner host.id}}
+          <li class="edit-hangout">
+            <a href="#">
+              Edit Details
+            </a>
+          </li>
+          <li class="delete-hangout">
+            <a href="#">
+              Delete
+            </a>
+          </li>
+          {{else}}
+          {{#if isInRole 'admin,moderator,volunteer' 'CB'}}
+            <li role="separator" class="divider"></li>
+            <li class="edit-hangout">
+              <a href="#">
+                Edit
+                <span class="label label-info">M</span>
+              </a>
+            </li>
+          {{/if}}
+          {{#if isInRole 'admin,moderator' 'CB'}}
+            <li role="separator" class="divider"></li>
+            <li class="delete-hangout">
+              <a href="#">
+                Delete
+                <span class="label label-info">M</span>
+              </a>
+            </li>
+          {{/if}}
+        {{/if}}
+    </ul>
+  </div>
+</template>
+
+<!-- Hangout Frame Template -->
+<template name="hangoutFrame">
+<div id="hangout-button-wrapper">
+  <p class="warning chrome-firefox-warning">Warning: Please load this page using Chrome <img src="/images/chrome.ico" width="25"/> or Firefox <img src="/images/firefox.ico" width="25"/> to avoid technical issues</p>
+  <img src="/images/jitsi-screenshot-2018.jpg" width="100%" class="load-hangout load-hangout-screenshot"/>
+  <button class="margin-top-1 margin-bottom-1 click-text btn btn-cb2 load-hangout">{{_ "click_to_load_hangout"}}</button>
+</div>
+
+<div class="alert alert-info margin-top-1 margin-bottom-1">
+  <p class="align-center">If you're seeing a blank screen, <a href="https://meet.jit.si/{{room}}#config.startWithVideoMuted=true" target="_blank" id="joinHere">join here.</a> (New to Jitsi? Check out <a href="/images/codebuddies_jitsi_diagram.jpg" target="_blank">this diagram</a>.)</p>
+</div>
+  <div id="hangout-container"></div>
+  {{#if numParticipants}}
+  <div class="margin-top-1 margin-bottom-1">
+    <p class="align-center well">{{_ "hangout_participant" count=numParticipants }}</p>
+  </div>
+  {{/if}}
+  <span id="post_id" class="hide">{{_id}}</span>
+</template>
+
+<!-- Hangout Learnings Template -->
+<template name="hangoutLearnings">
+<h3 id="hangout-learnings-title">Things We Learned</h3>
+<div class="status-list">
+ <div class="learnings">
+    {{#each learnings}}
+        {{> learningItem}}
+    {{/each}}
+  {{#if Template.subscriptionsReady}}
+    {{#if hasMoreLearnings}}
+        <button id="load-more-learnings" class="btn btn-default btn-block">Load more</button>
+    {{/if}}
+  {{/if}}
+  </div>
+ </div>
+</template>
+
+<!-- Hangout Learned Template -->
+<template name="hangoutLearned">
+	<div class="margin-bottom-1">
+	<textarea id="learned-text" rows="3" maxlength="280" class="form-control {{#unless currentUser}} continue-popup {{/unless}}" placeholder="What did you learn or accomplish?"></textarea>
+	<label id="twitterWarning"><input type="checkbox" id="chkOptInTweet"> Tweet this message automatically out on <a href="http://twitter.com/codebuddiesmeet" target="_blank"><i class="fab fa-twitter" aria-hidden="true"></i>codebuddiesmeet</a></label>
+	<span class="learnedCharactersLeft">{{learnedCharacterCount}}</span>
+	</div>
+</template>
+
+<!-- Create Hangout Modal Template -->
+<template name="createHangoutModal">
+  <div id="create-hangout-modal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title text-center">{{_ "start_a_hangout"}}</h4>
+          <button type="button" class="btn btn-circle btn-outline btn-info pull-right" data-dismiss="modal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-7">
+              <div id="date-group" class="row">
+                <div class="col-md-6">
+                  <div class="input-group date" id="start-date-time-picker">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                    <input id="start-date-time" class="form-control" type="text" placeholder="Start Time" readonly>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div id="set-end-date-time-block">
+                    <select class="form-control" id="end-date-time">
+                        <option value="25">25 minutes</option>
+                        <option value="60">60 minutes</option>
+                        <option value="90">90 minutes</option>
+                        <option value="120">2 hours</option>
+                        <option value="180">3 hours</option>
+                        <option value="undefined">End manually</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <br>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <input id="topic" class="form-control" type="text" placeholder="Question/Goal">
+                </div>
+              </div>
+              <br>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <select class="study-group-single form-control">
+                    <option></option>
+                  </select>
+                </div>
+              </div>
+
+              <br>
+              <div class="row">
+                <div class="col-md-12">
+                  <div data-editor-host></div>
+                </div>
+              </div>
+            </div>
+            <div id="hangout-options" class="col-md-5 text-left">
+              <div class="btn-group btn-group-vertical" data-toggle="buttons">
+                <label class="btn active" id="sId">
+                  <input  type="radio" name='hangout-type' value="silent" checked><i class="fas fa-circle fa-2x"></i><i class="fas fa-dot-circle fa-2x"></i> <span>  <i class="fas fa-microphone-slash text-danger-color type"></i><span class="title">{{_ "silent_hangout"}}</span></span>
+                </label>
+                <label class="btn" id="tId">
+                  <input  type="radio" name='hangout-type' value="teaching"><i class="fas fa-circle fa-2x"></i><i class="fas fa-dot-circle fa-2x"></i><span> <i class="fas fa-user text-warning-color type"></i><span class="title">{{_ "teaching_hangout"}}</span></span>
+                </label>
+                <label class="btn" id="cId">
+                  <input  type="radio" name='hangout-type' value="collaboration"><i class="fas fa-circle fa-2x"></i><i class="fas fa-dot-circle fa-2x"></i><span> <i class="fas fa-users text-success-color type"></i><span class="title">{{_ "collaboration_hangout"}}</span></span>
+                </label>
+              </div>
+              <hr />
+              <div id="external">
+               <label><input type="checkbox" id="external-checkbox" name="externalCheckbox"> Use external platform to host hangout</label>
+               <div id="external-fields" style="display: none;">
+                   <p><label>Join us on:</label>
+                       <input type="text" name="externalButtonText" id="externalButtonText" placeholder="e.g. Zoom, Twitch, etc." class="form-control">
+                   </p>
+                   <p>
+                       <label>URL</label>
+                       <input type="text" name="externalURL" id="externalURL" placeholder="Zoom, Twitch, Google Hangout etc. URL" class="form-control">
+                   </p>
+               </div>
+              </div>
+              <div class="descriptionHide" id="d1">
+                <span>Create a silent hangout to motivate yourself to get through a tutorial with others who are learning from the same tutorial, or create one for a fun silent coworking experience.</span>
+              </div>
+              <div class="descriptionHide" id="d2">
+                <span>Create a teaching hangout to practice teaching a concept or to walk participants through a codebase. This is your chance to share what you know!</span>
+              </div>
+              <div class="descriptionHide" id="d3">
+                <span>Create a collaboration hangout to pair program on a coding exercise, talk through a chapter of a tutorial, or work on an open-sourced project together.</span>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <button id="create-hangout" class="btn btn-cb2">{{_ "create_a_hangout"}}</button>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <span class="message">{{_ "create_hangout_hint"}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Edit Hangout Modal Template -->
+<template name="editHangoutModal">
+  <div id="edit-hangout-modal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title text-center">{{_ "edit_a_hangout"}}</h4>
+          <button type="button" class="btn btn-circle btn-outline btn-info pull-right" data-dismiss="modal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-7">
+              <div id="date-group" class="row">
+                <div class="col-md-6">
+                  <div class="input-group date" id="start-date-time-picker">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                    <input id="start-date-time" class="form-control" type="text" placeholder="Start Time" readonly>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div id="set-end-date-time-block">
+                    <select class="form-control" id="end-date-time">
+                        <option value="25">25 minutes</option>
+                        <option value="60">60 minutes</option>
+                        <option value="90">90 minutes</option>
+                        <option value="120">2 hours</option>
+                        <option value="180">3 hours</option>
+                        <option value="1440">End manually</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-md-12">
+                  <input id="topic" class="form-control" type="text" placeholder="Study Session Topic">
+                </div>
+              </div>
+              <br>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <input id="group" class="form-control" type="text" disabled="true">
+                </div>
+              </div>
+              <br>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <div data-editor-host></div>
+                </div>
+              </div>
+            </div>
+            <div id="hangout-options" class="col-md-5 text-left">
+              <div class="btn-group btn-group-vertical" data-toggle="buttons">
+                <label class="btn active">
+                  <input type="radio" name='hangout-type' value="silent" checked><i class="fas fa-circle fa-2x"></i><i class="fas fa-dot-circle fa-2x"></i> <span>  <i class="fas fa-microphone-slash text-danger-color type"></i><span class="title">{{_ "silent_hangout"}}</span></span>
+                </label>
+                <label class="btn">
+                  <input type="radio" name='hangout-type' value="teaching"><i class="fas fa-circle fa-2x"></i><i class="fas fa-dot-circle fa-2x"></i><span> <i class="fas fa-user text-warning-color type"></i><span class="title">{{_ "teaching_hangout"}}</span></span>
+                </label>
+                <label class="btn">
+                  <input type="radio" name='hangout-type' value="collaboration"><i class="fas fa-circle fa-2x"></i><i class="fas fa-dot-circle fa-2x"></i><span> <i class="fas fa-users text-success-color type"></i><span class="title">{{_ "collaboration_hangout"}}</span></span>
+                </label>
+              </div>
+              <div id="external">
+               <label><input type="checkbox" id="external-checkbox" name="externalCheckbox"> Use external platform to host hangout</label>
+               <div id="external-fields" style="display: none;">
+                   <p><label>Join us on:</label>
+                       <input type="text" name="externalButtonText" id="externalButtonText" placeholder="e.g. Zoom, Twitch, etc." class="form-control">
+                   </p>
+                   <p>
+                       <label>URL</label>
+                       <input type="text" name="externalURL" id="externalURL" placeholder="Zoom, Twitch, Google Hangout etc. URL" class="form-control">
+                   </p>
+              </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <button id="edit-hangout" class="btn btn-cb2">{{_ "save_changes"}}</button>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <span class="message">{{_ "edit_hangout_hint"}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Clone Hangout Modal Template -->
+<template name="cloneHangoutModal">
+  <div id="clone-hangout-modal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title text-center">{{_ "start_a_hangout"}}</h4>
+          <button type="button" class="btn btn-circle btn-outline btn-info pull-right" data-dismiss="modal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-7">
+              <div id="date-group" class="row">
+                <div class="col-md-6">
+                  <div class="input-group date" id="start-date-time-picker">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                    <input id="start-date-time" class="form-control" type="text" placeholder="Start Time" readonly>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div id="set-end-date-time-block">
+                    <select class="form-control" id="end-date-time">
+                        <option value="25">25 minutes</option>
+                        <option value="60">60 minutes</option>
+                        <option value="90">90 minutes</option>
+                        <option value="120">2 hours</option>
+                        <option value="180">3 hours</option>
+                        <option value="undefined">End manually</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-md-12">
+                  <input id="topic" class="form-control" type="text" placeholder="Study Session Topic">
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-md-12">
+                  {{#if Template.subscriptionsReady}}
+                    <select class="study-group-single form-control">
+                      <option></option>
+                    </select>
+                  {{else}}
+                    {{> loading}}
+                  {{/if}}
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-md-12">
+                  <div data-editor-host></div>
+                </div>
+              </div>
+            </div>
+            <div id="hangout-options" class="col-md-5 text-left">
+              <div class="btn-group btn-group-vertical" data-toggle="buttons">
+                <label class="btn active">
+                  <input type="radio" name='hangout-type' value="silent" checked><i class="fas fa-circle fa-2x"></i><i class="fas fa-dot-circle fa-2x"></i> <span>  <i class="fas fa-microphone-slash text-danger-color type"></i><span class="title">{{_ "silent_hangout"}}</span></span>
+                </label>
+                <label class="btn">
+                  <input type="radio" name='hangout-type' value="teaching"><i class="fas fa-circle fa-2x"></i><i class="fas fa-dot-circle fa-2x"></i><span> <i class="fas fa-user text-warning-color type"></i><span class="title">{{_ "teaching_hangout"}}</span></span>
+                </label>
+                <label class="btn">
+                  <input type="radio" name='hangout-type' value="collaboration"><i class="fas fa-circle fa-2x"></i><i class="fas fa-dot-circle fa-2x"></i><span> <i class="fas fa-users text-success-color type"></i><span class="title">{{_ "collaboration_hangout"}}</span></span>
+                </label>
+              </div>
+              <div id="external">
+               <label><input type="checkbox" id="external-checkbox" name="externalCheckbox"> Use external platform to host hangout</label>
+               <div id="external-fields" style="display: none;">
+                   <p><label>Join us on:</label>
+                       <input type="text" name="externalButtonText" id="externalButtonText" placeholder="e.g. Zoom, Twitch, etc." class="form-control">
+                   </p>
+                   <p>
+                       <label>URL</label>
+                       <input type="text" name="externalURL" id="externalURL" placeholder="Zoom, Twitch, Google Hangout etc. URL" class="form-control">
+                   </p>
+              </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <button id="clone-hangout" class="btn btn-cb2">{{_ "clone_a_hangout"}}</button>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <span class="message">{{_ "clone_hangout_hint"}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Hangout Sidebar Alternatives Template -->
+<template name="hangoutSidebarAlternatives">
+  {{# unless isHangoutCompleted end }}
+    {{#if isHangoutInProgress start end}}
+      <h3>HANGOUT ALTERNATIVES</h3>
+      {{#if isAttending users}}
+        <p class="align-center">Want to use Google Hangouts instead?
+          {{#unless url }}
+            <div class="google-hangout display-inline">
+                <div class="g-hangout" data-render="createhangout" data-initial_apps="[{ app_id : '999356798349', start_data: {{_id}}, 'app_type' : 'LOCAL_APP' }]" data-widget_size="72"></div>
+            </div>
+          {{ else }}
+            <a class="btn btn-cb2 btn-grey btn-success google-hangout-button" href="{{url}}" target="_blank">Launch Google Hangout</a>
+          {{/unless}}
+        </p>
+      {{/if}}
+    {{/if}}
+  {{/unless}}
+</template>
+
+<!-- Hangout Sidebar Tips Template -->
+<template name="hangoutSidebarTips">
+  <h3>Hangout Tips</h3>
+  <ol>
+    <li>Remember that this is a safe space, and we help each other learn faster. Be patient, and always feel free to ask questions.</li>
+    <li>You agree not to stream copyrighted or otherwise objectionable content in the hangout.</li>
+    <li class="load-hangout">When it's time, click to load the hangout. </li>
+    <li>Please keep video turned off.</li>
+    <li>Take advantage of the ability to screenshare simultaneously! It is helpful for reading the same code, pair programming, and staying on task.</li>
+    <li>Remember to share what you learned.</li>
+  </ol>
+</template>
+
+<!-- Support Hangout Organizer Template -->
+<template name="supportHangoutOrganizer">
+    {{#with supportLinks}}
+      <div class="alert alert-warning margin-top-1 margin-bottom-1 alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        Did you learn a lot in this hangout?
+           <br> You can show the hangout organizer your appreciation by:
+            <ul>
+               {{# if buymeacoffee}}
+                   <li><i class="fas fa-arrow-right" aria-hidden="true"></i> <a href="https://www.buymeacoffee.com/{{buymeacoffee}}" target="_blank">buying them a coffee <i class="fas fa-coffee" aria-hidden="true"></i></a></li>
+                {{/if}}
+                {{# if patreon}}
+                    <li><i class="fas fa-arrow-right" aria-hidden="true"></i> <a href="{{patreon}}" target="_blank">supporting them on Patreon <i class="fab fa-patreon"></i></a></li>
+                {{/if}}
+                {{# if nonprofit}}
+                    <li><i class="fas fa-arrow-right" aria-hidden="true"></i> <a href="{{nonprofit}}" target="_blank">supporting a non-profit they champion <i class="fas fa-heart" aria-hidden="true"></i></a></li>
+                {{/if}}
+            </ul>
+        </div>
+    {{else}}
+      {{#if equals currentUser._id instance.data.organizerId}}
+      <div class="alert alert-warning margin-top-1 margin-bottom-1 alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <p>
+           <i class="fas fa-coffee" aria-hidden="true"></i> Please set up your <a href="http://buymeacoffee.com" target="_blank">Buy Me A Coffee</a> or <a href="http://patreon.com" target="_blank">Patreon</a> links so the community can tip you for being a great hangout organizer!
+           <a href="#" id='editProfileInfo'>Edit Profile</a>
+        </p>
+        <p>
+          You can also choose to feature a non-profit you'd like to support.
+        </p>
+      </div>
+      {{/if}}
+    {{/with}}
+</template>

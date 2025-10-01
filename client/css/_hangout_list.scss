@@ -1,19 +1,22 @@
-#active_hangouts, #past_hangouts {
+#active_hangouts,
+#past_hangouts {
   .study-group-tag {
     z-index: 1;
-    color: $cta-blue;
-    background: $white;
+    color: $cta-blue;       // coral accent
+    background: $white;     // card background (#1F1F1F)
     position: absolute;
     font-size: 11px;
   }
+
   padding: 0;
+
   .hangout-item {
     p.overflowtext {
-      color: $warm-grey;
+      color: $warm-grey;   // subtle gray text
     }
 
     p.completed {
-      color: $kudo;
+      color: $kudo;        // neutral gray
       text-align: left;
       line-height: 10px;
       font-size: 85%;
@@ -25,6 +28,8 @@
     ul.dropdown-menu {
       top: 35px;
       left: -200px;
+      background: $bg-white; // dark background
+      color: $primary-grey;
     }
 
     span.dropdown-toggle:hover {
@@ -33,11 +38,11 @@
 
     .hangout-topic {
       @include font-face(400, 17px, normal, $cta-blue);
-    }
 
-    .hangout-topic.completed {
-      color: $warm-grey;
-      font-weight: 600;
+      &.completed {
+        color: $warm-grey;
+        font-weight: 600;
+      }
     }
 
     p.upcoming {
@@ -85,7 +90,7 @@
   }
 
   .col-lg-12.hangouts-title {
-    color: #fff;
+    color: $white;
     margin-top: 10px;
   }
 }
