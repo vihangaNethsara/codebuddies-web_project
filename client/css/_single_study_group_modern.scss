@@ -1,0 +1,1003 @@
+/**
+ * MODERN SINGLE STUDY GROUP PAGE STYLES
+ * ====================================
+ * A complete redesign with modern UI/UX principles
+ * - Card-based layout
+ * - Clear visual hierarchy
+ * - Smooth animations
+ * - Fully responsive
+ * - Accessible components
+ */
+
+// ============================================
+// 1. HERO SECTION - Group Header
+// ============================================
+.study-group-hero {
+  position: relative;
+  background: linear-gradient(135deg, 
+    var(--accent, #1e90ff) 0%, 
+    rgba(30, 144, 255, 0.8) 50%, 
+    var(--accent-dark, #0366d6) 100%
+  );
+  padding: 3rem 0 2rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+
+  // Decorative pattern overlay
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/language-logos.svg') center repeat;
+    opacity: 0.1;
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .group-title-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+      flex: 1;
+      
+      @media (max-width: 768px) {
+        font-size: 1.75rem;
+      }
+    }
+
+    .btn-edit-title {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: translateY(-2px);
+      }
+
+      i {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .group-tagline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+
+    i {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+  }
+
+  // Status badge (archived)
+  .group-status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 59, 48, 0.9);
+    color: #ffffff;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// ============================================
+// 2. STICKY ACTION BAR - Primary Actions
+// ============================================
+.study-group-action-bar {
+  position: sticky;
+  top: var(--header-height, 60px);
+  z-index: 100;
+  background: var(--surface, #ffffff);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  .action-bar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  // Primary actions group
+  .primary-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+
+  // Secondary actions group
+  .secondary-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  // Modern button styles
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    white-space: nowrap;
+
+    i {
+      font-size: 1rem;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    // Primary button variant
+    &.btn-primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+
+      &:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      }
+    }
+
+    // Danger button variant
+    &.btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #ffffff;
+
+      &:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      }
+    }
+
+    // Secondary button variant
+    &.btn-secondary {
+      background: rgba(var(--accent-rgb, 30, 144, 255), 0.1);
+      color: var(--accent, #1e90ff);
+      border: 2px solid var(--accent, #1e90ff);
+
+      &:hover {
+        background: var(--accent, #1e90ff);
+        color: #ffffff;
+      }
+    }
+
+    // Icon-only button
+    &.btn-icon-only {
+      padding: 0.75rem;
+      background: transparent;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      color: var(--text, #111111);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+        border-color: rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    // Disabled state
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+  }
+
+  // Member count badge
+  .member-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: var(--text, #111111);
+
+    i {
+      color: var(--accent, #1e90ff);
+    }
+
+    .count {
+      font-weight: 700;
+      color: var(--accent, #1e90ff);
+    }
+  }
+}
+
+// ============================================
+// 3. MAIN CONTENT LAYOUT - Two Column Grid
+// ============================================
+.study-group-content {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+  margin-bottom: 3rem;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+// ============================================
+// 4. MAIN CONTENT AREA - Left Side
+// ============================================
+.main-content-area {
+  min-width: 0; // Prevent grid blowout
+
+  // Modern tab navigation
+  .modern-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+    /* Note: -webkit-overflow-scrolling is deprecated but provides smooth scrolling on older iOS */
+
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+
+    .tab-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border: none;
+      background: transparent;
+      color: var(--muted, #6b7280);
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      position: relative;
+      top: 2px;
+
+      i {
+        font-size: 0.9rem;
+      }
+
+      .badge {
+        background: rgba(0, 0, 0, 0.1);
+        color: var(--muted, #6b7280);
+        padding: 0.25rem 0.5rem;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      &:hover {
+        color: var(--text, #111111);
+        background: rgba(0, 0, 0, 0.02);
+      }
+
+      &.active {
+        color: var(--accent, #1e90ff);
+        border-bottom-color: var(--accent, #1e90ff);
+
+        .badge {
+          background: var(--accent, #1e90ff);
+          color: #ffffff;
+        }
+      }
+    }
+  }
+
+  // Tab content sections
+  .tab-content-modern {
+    .tab-pane-modern {
+      display: none;
+      animation: fadeIn 0.3s ease;
+
+      &.active {
+        display: block;
+      }
+    }
+  }
+}
+
+// ============================================
+// 5. SIDEBAR - Right Side Info Cards
+// ============================================
+.group-sidebar {
+  // Quick info card
+  .quick-info-card {
+    background: var(--surface, #ffffff);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text, #111111);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      i {
+        color: var(--accent, #1e90ff);
+      }
+    }
+
+    .info-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+
+        &:last-child {
+          border-bottom: none;
+          padding-bottom: 0;
+        }
+
+        i {
+          color: var(--muted, #6b7280);
+          font-size: 0.9rem;
+          width: 20px;
+          text-align: center;
+        }
+
+        strong {
+          color: var(--text, #111111);
+          font-weight: 600;
+        }
+
+        .value {
+          color: var(--muted, #6b7280);
+        }
+      }
+    }
+  }
+
+  // Organizers section
+  .organizers-card {
+    .organizer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+
+      .organizer-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+
+        &:hover {
+          transform: translateY(-4px);
+
+          .organizer-avatar {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+          }
+        }
+
+        .organizer-avatar {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 3px solid var(--accent, #1e90ff);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease;
+        }
+
+        .organizer-name {
+          font-size: 0.85rem;
+          color: var(--text, #111111);
+          font-weight: 500;
+          text-align: center;
+          max-width: 80px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+
+  // Online members card
+  .online-members-card {
+    .online-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: #10b981;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+
+    .members-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      max-height: 300px;
+      overflow-y: auto;
+
+      .member-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: background 0.3s ease;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.02);
+        }
+
+        .member-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #10b981;
+        }
+
+        .member-info {
+          flex: 1;
+          min-width: 0;
+
+          .member-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text, #111111);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .member-status {
+            font-size: 0.8rem;
+            color: var(--muted, #6b7280);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+      }
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+      }
+    }
+  }
+}
+
+// ============================================
+// 6. CONTENT CARDS - Modern Card Styles
+// ============================================
+.content-card {
+  background: var(--surface, #ffffff);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+
+    h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text, #111111);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+
+  .card-body {
+    color: var(--text-secondary, #4b5563);
+    line-height: 1.6;
+    font-size: 0.95rem;
+
+    p {
+      margin: 0 0 1rem 0;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .card-footer {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}
+
+// ============================================
+// 7. EMPTY STATES - When no content
+// ============================================
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: var(--muted, #6b7280);
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .empty-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text, #111111);
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-description {
+    color: var(--muted, #6b7280);
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--accent, #1e90ff);
+    color: #ffffff;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: var(--accent-dark, #0366d6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(30, 144, 255, 0.3);
+    }
+  }
+}
+
+// ============================================
+// 8. MEMBER GRID - Members Tab
+// ============================================
+.members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+
+  .member-card {
+    background: var(--surface, #ffffff);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      border-color: var(--accent, #1e90ff);
+    }
+
+    .member-card-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 1rem;
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      transition: border-color 0.3s ease;
+    }
+
+    &:hover .member-card-avatar {
+      border-color: var(--accent, #1e90ff);
+    }
+
+    .member-card-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text, #111111);
+      margin-bottom: 0.25rem;
+    }
+
+    .member-card-role {
+      font-size: 0.85rem;
+      color: var(--muted, #6b7280);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+
+      &.owner {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+      }
+
+      &.admin {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+      }
+
+      &.moderator {
+        background: rgba(59, 130, 246, 0.1);
+        color: #2563eb;
+      }
+
+      &.member {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+      }
+    }
+  }
+}
+
+// ============================================
+// 9. HANGOUT SECTION - 24/7 Room
+// ============================================
+.hangout-section {
+  .hangout-embed-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; // 16:9 aspect ratio
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000000;
+    margin-bottom: 1rem;
+
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .hangout-info {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    color: #047857;
+    font-size: 0.95rem;
+    line-height: 1.5;
+
+    i {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .hangout-locked {
+    text-align: center;
+    padding: 3rem 2rem;
+
+    img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      opacity: 0.7;
+    }
+
+    .lock-message {
+      font-size: 1.1rem;
+      color: var(--text, #111111);
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+  }
+}
+
+// ============================================
+// 10. BREADCRUMB - Modern Navigation
+// ============================================
+.modern-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    a {
+      color: var(--accent, #1e90ff);
+      text-decoration: none;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: var(--accent-dark, #0366d6);
+        text-decoration: underline;
+      }
+    }
+
+    &.active {
+      color: var(--muted, #6b7280);
+    }
+
+    .separator {
+      color: var(--muted, #6b7280);
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// ============================================
+// 11. ANIMATIONS
+// ============================================
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+// ============================================
+// 12. LOADING STATES
+// ============================================
+.loading-skeleton {
+  animation: pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.05) 25%,
+    rgba(0, 0, 0, 0.08) 50%,
+    rgba(0, 0, 0, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: 8px;
+
+  &.skeleton-title {
+    height: 2rem;
+    width: 60%;
+    margin-bottom: 1rem;
+  }
+
+  &.skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      width: 80%;
+    }
+  }
+
+  &.skeleton-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+  }
+}
+
+// ============================================
+// 13. RESPONSIVE ADJUSTMENTS
+// ============================================
+@media (max-width: 768px) {
+  .study-group-hero {
+    padding: 2rem 0 1.5rem;
+
+    .group-title-section h1 {
+      font-size: 1.5rem;
+    }
+
+    .group-tagline {
+      font-size: 1rem;
+    }
+  }
+
+  .study-group-action-bar {
+    position: relative;
+    top: 0;
+  }
+
+  .study-group-content {
+    display: block;
+  }
+
+  .members-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .content-card {
+    padding: 1.5rem;
+  }
+}
+
+// ============================================
+// 14. DARK MODE SUPPORT (Optional)
+// ============================================
+@media (prefers-color-scheme: dark) {
+  .study-group-hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  }
+
+  .content-card,
+  .quick-info-card,
+  .member-card {
+    background: var(--surface-dark, #1f2937);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .modern-tabs {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-action.btn-icon-only {
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-dark, #f9fafb);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// ============================================
+// 15. PRINT STYLES
+// ============================================
+@media print {
+  .study-group-action-bar,
+  .btn-action,
+  .modern-tabs {
+    display: none;
+  }
+
+  .study-group-content {
+    display: block;
+  }
+
+  .content-card {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #000000;
+  }
+}

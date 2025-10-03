@@ -52,15 +52,35 @@
     <section class="groups-topbar-section">
       <div class="container">
         <div class="groups-topbar">
-            <div class="sg-search">
+            <div class="sg-search position-relative">
             <label for="sg-search-input" class="visually-hidden">Search study groups</label>
+            <i class="fas fa-search search-icon" aria-hidden="true"></i>
             <input id="sg-search-input" type="search" class="form-control search-input" placeholder="Search groups, topics, tags..." aria-label="Search study groups" autocomplete="off">
+            <button id="sg-search-button" class="btn-search-submit" title="Search">
+              <i class="fas fa-search"></i>
+              <span>Search</span>
+            </button>
+            <button id="sg-clear-search" class="btn-clear-search" title="Clear search" style="display:none;">
+              <i class="fas fa-times"></i>
+            </button>
             <div id="sg-suggestions" class="sg-suggestions list-group position-absolute shadow-sm" style="display:none;" role="listbox" aria-label="Search suggestions"></div>
           </div>
 
           <div class="sg-actions">
+            <div class="view-toggle-wrapper">
+              <button class="btn btn-view-toggle {{#if isViewMode 'grid'}}active{{/if}}" data-view="grid" title="Grid view" aria-label="Grid view">
+                <i class="fas fa-th"></i>
+              </button>
+              <button class="btn btn-view-toggle {{#if isViewMode 'list'}}active{{/if}}" data-view="list" title="List view" aria-label="List view">
+                <i class="fas fa-list"></i>
+              </button>
+            </div>
+
             <div class="filter-controls d-flex align-items-center gap-2">
-              <button id="sg-filter-toggle" class="btn btn-outline-light d-inline-flex align-items-center" aria-expanded="false" aria-controls="advancedFilters">Filters</button>
+              <button id="sg-filter-toggle" class="btn btn-outline-light d-inline-flex align-items-center gap-2" aria-expanded="false" aria-controls="advancedFilters">
+                <i class="fas fa-filter"></i>
+                <span>Filters</span>
+              </button>
               <select id="sg-sort" class="form-select form-select-sm" aria-label="Sort by">
                 <option value="trending">Trending</option>
                 <option value="newest">Newest</option>
@@ -69,12 +89,15 @@
             </div>
 
             <div class="chip-list d-none d-sm-flex">
-              <button class="chip" data-skill="beginner"><span class="icon">⭐</span> Beginner</button>
-              <button class="chip" data-skill="intermediate"><span class="icon">⚡</span> Intermediate</button>
-              <button class="chip" data-skill="advanced"><span class="icon">🚀</span> Advanced</button>
+              <button class="chip {{#if isSkillSelected 'beginner'}}active{{/if}}" data-skill="beginner"><span class="icon">⭐</span> Beginner</button>
+              <button class="chip {{#if isSkillSelected 'intermediate'}}active{{/if}}" data-skill="intermediate"><span class="icon">⚡</span> Intermediate</button>
+              <button class="chip {{#if isSkillSelected 'advanced'}}active{{/if}}" data-skill="advanced"><span class="icon">🚀</span> Advanced</button>
             </div>
 
-            <button id="createGroupButton" class="btn btn-gradient-primary">Create group</button>
+            <button id="createGroupButton" class="btn btn-gradient-primary d-flex align-items-center gap-2">
+              <i class="fas fa-plus-circle"></i>
+              <span>Create Group</span>
+            </button>
           </div>
         </div>
 
@@ -106,6 +129,46 @@
     {{!-- Stats Section (card-based) --}}
     <section class="stats-section">
       <div class="container">
+        {{!-- Featured Groups Carousel --}}
+        <div class="featured-section mb-5">
+          <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h3 class="section-title mb-0">
+              <i class="fas fa-star me-2 text-warning"></i>
+              Featured Groups
+            </h3>
+            <div class="carousel-controls">
+              <button class="btn-carousel-control prev" aria-label="Previous featured groups">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="btn-carousel-control next" aria-label="Next featured groups">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          <div class="featured-carousel-wrapper">
+            <div class="featured-carousel">
+              {{#each featuredGroups}}
+                <div class="featured-card" role="listitem">
+                  <a href="{{pathFor 'study group' studyGroupSlug=slug studyGroupId=_id}}" class="featured-link">
+                    <div class="featured-image" style="background-image: url('{{groupImage}}')"></div>
+                    <div class="featured-content">
+                      <h4 class="featured-title">{{title}}</h4>
+                      <p class="featured-meta">
+                        <i class="fas fa-users"></i> {{memberCountText}}
+                      </p>
+                    </div>
+                  </a>
+                </div>
+              {{else}}
+                <div class="text-center text-muted py-4">
+                  <i class="fas fa-star-half-alt fa-2x mb-2"></i>
+                  <p>No featured groups yet</p>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+
         <div class="stats-grid">
           <div class="stats-card">
             <div class="stat-icon"><i class="fas fa-users-crown fa-2x"></i></div>
@@ -244,23 +307,30 @@
                       </div>
                       {{/if}}
 
-                      <div class="card-actions">
+                      <div class="card-actions d-flex gap-2 mt-3">
                         {{#unless isInRole 'member' _id}}
-                          <button class="btn btn-join btn-join-study-group {{#unless currentUser}}continue-popup{{else}}join-study-group{{/unless}}" aria-label="Join {{title}}" disabled={{isJoining}}>
+                          <button class="btn btn-join btn-join-study-group flex-grow-1 {{#unless currentUser}}continue-popup{{else}}join-study-group{{/unless}}" aria-label="Join {{title}}" disabled={{isJoining}}>
                             {{#if isJoining}}
-                              <i class="fas fa-spinner fa-spin"></i> Joining...
+                              <i class="fas fa-spinner fa-spin me-1"></i> Joining...
                             {{else}}
+                              <i class="fas fa-user-plus me-1"></i>
                               {{_ "join_study_group"}}
                             {{/if}}
                           </button>
+                          <a href="{{pathFor 'study group' studyGroupSlug=slug studyGroupId=_id}}" class="btn btn-outline-light btn-view-details" aria-label="View details for {{title}}">
+                            <i class="fas fa-eye"></i>
+                          </a>
                         {{/unless}}
 
                         {{#if isInRole 'admin, moderator, member' _id }}
-                          <button class="btn btn-leave-study-group" disabled={{isLeaving}}>
+                          <a href="{{pathFor 'study group' studyGroupSlug=slug studyGroupId=_id}}" class="btn btn-primary flex-grow-1" aria-label="View {{title}}">
+                            <i class="fas fa-arrow-right me-1"></i> View Group
+                          </a>
+                          <button class="btn btn-outline-danger btn-leave-study-group" disabled={{isLeaving}} title="Leave group">
                             {{#if isLeaving}}
-                              <i class="fas fa-spinner fa-spin"></i> Leaving...
+                              <i class="fas fa-spinner fa-spin"></i>
                             {{else}}
-                              {{_ "leave_study_group"}}
+                              <i class="fas fa-sign-out-alt"></i>
                             {{/if}}
                           </button>
                         {{/if}}

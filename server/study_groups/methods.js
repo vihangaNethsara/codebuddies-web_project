@@ -596,3 +596,72 @@ Meteor.methods({
     );
   }
 });
+
+/**
+ * Bookmark Management Methods
+ * For the modern UI to save favorite groups
+ */
+
+Meteor.methods({
+  /**
+   * Check if group is bookmarked by current user
+   * @param {String} groupId - Study group ID
+   * @return {Boolean} true if bookmarked
+   */
+  isGroupBookmarked(groupId) {
+    check(groupId, String);
+
+    if (!this.userId) {
+      return false;
+    }
+
+    const user = Meteor.users.findOne(this.userId);
+    return user && user.profile && user.profile.bookmarkedGroups && user.profile.bookmarkedGroups.includes(groupId);
+  },
+
+  /**
+   * Add group to user's bookmarks
+   * @param {String} groupId - Study group ID
+   * @return {Boolean} true on success
+   */
+  addBookmark(groupId) {
+    check(groupId, String);
+
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized", "You must be logged in to bookmark groups");
+    }
+
+    // Verify group exists
+    const group = StudyGroups.findOne(groupId);
+    if (!group) {
+      throw new Meteor.Error("not-found", "Study group not found");
+    }
+
+    // Add to bookmarks array (using $addToSet to prevent duplicates)
+    Meteor.users.update(this.userId, {
+      $addToSet: { "profile.bookmarkedGroups": groupId }
+    });
+
+    return true;
+  },
+
+  /**
+   * Remove group from user's bookmarks
+   * @param {String} groupId - Study group ID
+   * @return {Boolean} true on success
+   */
+  removeBookmark(groupId) {
+    check(groupId, String);
+
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized", "You must be logged in to manage bookmarks");
+    }
+
+    // Remove from bookmarks array
+    Meteor.users.update(this.userId, {
+      $pull: { "profile.bookmarkedGroups": groupId }
+    });
+
+    return true;
+  }
+});

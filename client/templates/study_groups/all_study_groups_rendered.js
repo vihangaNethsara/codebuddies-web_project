@@ -88,6 +88,58 @@ Template.allStudyGroups.onRendered(function() {
     instance.suggestions.set([]);
   });
 
+  // Clear search button
+  instance.$(document).on("click", "#sg-clear-search", function(e) {
+    e.preventDefault();
+    $input.val("").focus();
+    instance.searchQuery.set("");
+    instance.suggestions.set([]);
+    $(this).hide();
+  });
+
+  // Show/hide clear button based on input
+  $input.on("input", function() {
+    const $clearBtn = instance.$("#sg-clear-search");
+    if (
+      $(this)
+        .val()
+        .trim().length > 0
+    ) {
+      $clearBtn.show();
+    } else {
+      $clearBtn.hide();
+    }
+  });
+
+  // View toggle handlers
+  instance.$(document).on("click", ".btn-view-toggle", function(e) {
+    e.preventDefault();
+    const view = $(this).attr("data-view");
+    instance.$(".btn-view-toggle").removeClass("active");
+    $(this).addClass("active");
+    instance.viewMode.set(view);
+
+    const $grid = instance.$(".groups-grid");
+    if (view === "list") {
+      $grid.addClass("list-view");
+    } else {
+      $grid.removeClass("list-view");
+    }
+  });
+
+  // Featured carousel controls
+  instance.$(document).on("click", ".btn-carousel-control.prev", function(e) {
+    e.preventDefault();
+    const $carousel = instance.$(".featured-carousel");
+    $carousel.animate({ scrollLeft: $carousel.scrollLeft() - 300 }, 300);
+  });
+
+  instance.$(document).on("click", ".btn-carousel-control.next", function(e) {
+    e.preventDefault();
+    const $carousel = instance.$(".featured-carousel");
+    $carousel.animate({ scrollLeft: $carousel.scrollLeft() + 300 }, 300);
+  });
+
   // compact search toggle (small screens)
   instance.$(document).on("click", "#sg-search-toggle", function(e) {
     e.preventDefault();

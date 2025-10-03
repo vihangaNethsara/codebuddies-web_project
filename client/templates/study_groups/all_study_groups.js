@@ -109,9 +109,11 @@ Template.allStudyGroups.helpers({
     // Apply search filter
     if (searchQuery) {
       const regex = new RegExp(searchQuery, "i");
-      groups = groups.filter(
-        group => regex.test(group.title) || regex.test(group.description) || regex.test(group.tags?.join(" ") || "")
-      );
+      groups = groups.filter(group => {
+        const tags = Array.isArray(group.tags) ? group.tags : group.tags ? [group.tags] : [];
+        const tagsStr = tags.join(" ");
+        return regex.test(group.title) || regex.test(group.description) || regex.test(tagsStr);
+      });
     }
 
     // Apply selected filter
@@ -131,12 +133,18 @@ Template.allStudyGroups.helpers({
 
     // Apply single topic filter (from pill)
     if (selectedTopic) {
-      groups = groups.filter(g => (g.tags || []).includes(selectedTopic));
+      groups = groups.filter(g => {
+        const tags = Array.isArray(g.tags) ? g.tags : g.tags ? [g.tags] : [];
+        return tags.includes(selectedTopic);
+      });
     }
 
     // Apply category filter (categories derived from tags)
     if (activeCategory && activeCategory !== "all") {
-      groups = groups.filter(g => (g.tags || []).includes(activeCategory));
+      groups = groups.filter(g => {
+        const tags = Array.isArray(g.tags) ? g.tags : g.tags ? [g.tags] : [];
+        return tags.includes(activeCategory);
+      });
     }
 
     // Apply skill filter
@@ -170,15 +178,25 @@ Template.allStudyGroups.helpers({
     const groups = StudyGroups.find().fetch();
     const map = {};
     groups.forEach(g => {
-      (g.tags || []).forEach(t => {
-        if (!map[t]) map[t] = { _id: t, name: t, icon: "fas fa-tag", groupCount: 0 };
-        map[t].groupCount++;
+      // Ensure tags is an array
+      const tags = Array.isArray(g.tags) ? g.tags : g.tags ? [g.tags] : [];
+      tags.forEach(t => {
+        if (t && typeof t === "string") {
+          if (!map[t]) map[t] = { _id: t, name: t, icon: "fas fa-tag", groupCount: 0 };
+          map[t].groupCount++;
+        }
       });
     });
     return Object.values(map).sort((a, b) => b.groupCount - a.groupCount);
   },
   activeCategory() {
     return Template.instance().activeCategory.get();
+  },
+  isSkillSelected(skill) {
+    return Template.instance().selectedSkill.get() === skill;
+  },
+  isViewMode(mode) {
+    return Template.instance().viewMode.get() === mode;
   },
   firstFiveMembers() {
     // this refers to group context in #each
@@ -334,25 +352,109 @@ Template.allStudyGroups.events({
     const currentTopic = template.selectedTopic.get();
     template.selectedTopic.set(currentTopic === topic ? null : topic);
   },
+  "click #sg-search-button": function(event, template) {
+    event.preventDefault();
+    console.log("Search button clicked!");
+    const searchInput = template.find("#sg-search-input");
+    if (searchInput) {
+      const query = searchInput.value.trim();
+      console.log("Search query:", query);
+      if (query) {
+        template.searchQuery.set(query);
+        // Show clear button
+        $("#sg-clear-search").show();
+        Bert.alert("Searching for: " + query, "info", "growl-top-right");
+      }
+    }
+  },
+  "click #sg-clear-search": function(event, template) {
+    event.preventDefault();
+    console.log("Clear button clicked!");
+    template.searchQuery.set("");
+    const searchInput = template.find("#sg-search-input");
+    if (searchInput) searchInput.value = "";
+    $("#sg-clear-search").hide();
+    template.suggestions.set([]);
+    Bert.alert("Search cleared", "info", "growl-top-right");
+  },
+  "click .btn-view-toggle": function(event, template) {
+    event.preventDefault();
+    event.stopPropagation();
+    const view = event.currentTarget.getAttribute("data-view") || "grid";
+    console.log("View toggle clicked! View:", view);
+
+    // Set reactive state first
+    template.viewMode.set(view);
+
+    // Then update DOM after reactive update completes
+    Meteor.defer(() => {
+      // Update active state
+      $(".btn-view-toggle").removeClass("active");
+      $(".btn-view-toggle[data-view='" + view + "']").addClass("active");
+
+      // Toggle list view class on groups-grid
+      const grid = $(".groups-grid");
+      if (view === "list") {
+        grid.addClass("list-view");
+        console.log("Switched to list view");
+        Bert.alert("List view activated", "info", "growl-top-right");
+      } else {
+        grid.removeClass("list-view");
+        console.log("Switched to grid view");
+        Bert.alert("Grid view activated", "info", "growl-top-right");
+      }
+    });
+  },
   "change #sg-sort": function(event, template) {
     const val = event.currentTarget.value;
     template.studyGroupsFilter.set(val);
   },
   "click .chip": function(event, template) {
+    event.preventDefault();
+    event.stopPropagation();
     const $el = $(event.currentTarget);
     const cat = $el.attr("data-category");
     const skill = $el.attr("data-skill");
+
+    console.log("Chip clicked! Category:", cat, "Skill:", skill);
+
     if (cat) {
-      template.activeCategory.set(cat);
-      // ensure chip activation visually
-      $(".chip[data-category]").removeClass("active");
-      $el.addClass("active");
+      const currentCat = template.activeCategory.get();
+      // Toggle category
+      if (currentCat === cat) {
+        template.activeCategory.set("all");
+        console.log("Category deselected:", cat);
+        Bert.alert("Filter removed: " + cat, "info", "growl-top-right");
+      } else {
+        template.activeCategory.set(cat);
+        console.log("Category selected:", cat);
+        Bert.alert("Filtering by: " + cat, "info", "growl-top-right");
+      }
+
+      // Force visual update after state change
+      Meteor.defer(() => {
+        $(".chip[data-category]").removeClass("active");
+        if (template.activeCategory.get() !== "all") {
+          $(".chip[data-category='" + template.activeCategory.get() + "']").addClass("active");
+        }
+      });
     }
+
     if (skill) {
       const cur = template.selectedSkill.get();
       const newSkill = cur === skill ? null : skill;
       template.selectedSkill.set(newSkill);
-      $el.toggleClass("active");
+
+      console.log(newSkill ? "Skill selected: " + newSkill : "Skill deselected");
+      Bert.alert(newSkill ? "Filtering by skill: " + newSkill : "Skill filter removed", "info", "growl-top-right");
+
+      // Force visual update after state change
+      Meteor.defer(() => {
+        $(".chip[data-skill]").removeClass("active");
+        if (newSkill) {
+          $(".chip[data-skill='" + newSkill + "']").addClass("active");
+        }
+      });
     }
   },
   "click .category-filters .btn-tag": function(event, template) {
@@ -368,14 +470,6 @@ Template.allStudyGroups.events({
     studyGroupsFilter = template.find("#studyGroupsFilter").value;
     template.flag.set(false);
     template.studyGroupsFilter.set(studyGroupsFilter);
-  },
-  "click .view-toggle .btn": function(event, template) {
-    const view = event.currentTarget.getAttribute("data-view") || "grid";
-    template.viewMode.set(view);
-    // add/remove list-view class on groups-grid container
-    const grid = template.$(".groups-grid");
-    if (view === "list") grid.addClass("list-view");
-    else grid.removeClass("list-view");
   },
   "click #createGroupButton": function(event) {
     Modal.show("newStudyGroupModal");

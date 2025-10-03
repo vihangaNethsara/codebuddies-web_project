@@ -1,0 +1,620 @@
+<template name="single_study_group_premium">
+  <div class="premium-container" data-theme="{{currentTheme}}">
+    
+    <!-- ============================================ -->
+    <!-- PREMIUM HEADER - Glass Morphism -->
+    <!-- ============================================ -->
+    <header class="premium-header">
+      <div class="header-left">
+        <a href="/study-groups" class="back-button" aria-label="Back to study groups">
+          <i class="fa fa-arrow-left"></i>
+        </a>
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="breadcrumb-separator">/</span>
+          <a href="/study-groups">Study Groups</a>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">{{studyGroup.title}}</span>
+        </nav>
+      </div>
+      
+      <div class="header-actions">
+        <!-- Theme Toggle -->
+        <button class="premium-button btn-icon theme-toggle" data-tooltip="Toggle dark mode" aria-label="Toggle dark mode">
+          <i class="fa fa-{{#if isDarkMode}}sun{{else}}moon{{/if}}"></i>
+        </button>
+        
+        <!-- Bookmark -->
+        <button class="premium-button btn-icon bookmark-btn {{#if isBookmarked}}bookmarked{{/if}}" 
+                data-tooltip="{{#if isBookmarked}}Remove bookmark{{else}}Bookmark this group{{/if}}"
+                aria-label="{{#if isBookmarked}}Remove bookmark{{else}}Bookmark this group{{/if}}">
+          <i class="fa fa-bookmark"></i>
+        </button>
+        
+        <!-- Share -->
+        <button class="premium-button btn-icon share-btn" data-tooltip="Share group" aria-label="Share group">
+          <i class="fa fa-share-alt"></i>
+        </button>
+        
+        <!-- Settings (Owner/Admin only) -->
+        {{#if canEdit}}
+        <button class="premium-button btn-icon settings-btn" data-tooltip="Group settings" aria-label="Group settings">
+          <i class="fa fa-cog"></i>
+        </button>
+        {{/if}}
+      </div>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- IMMERSIVE HERO SECTION -->
+    <!-- ============================================ -->
+    <section class="premium-hero">
+      <div class="hero-content">
+        <!-- Status Badge -->
+        <div class="hero-badge-group">
+          {{#if studyGroup.archived}}
+            <span class="hero-badge badge-archived">
+              <i class="fa fa-archive"></i>
+              <span>Archived</span>
+            </span>
+          {{else}}
+            <span class="hero-badge badge-active">
+              <span class="badge-pulse"></span>
+              <span>Active</span>
+            </span>
+          {{/if}}
+          
+          {{#if studyGroup.visibility}}
+            <span class="hero-badge badge-visibility">
+              <i class="fa fa-{{#if isPublic}}globe{{else}}lock{{/if}}"></i>
+              <span>{{studyGroup.visibility}}</span>
+            </span>
+          {{/if}}
+        </div>
+
+        <!-- Group Title with Gradient -->
+        <h1 class="hero-title">{{studyGroup.title}}</h1>
+
+        <!-- Description -->
+        {{#if studyGroup.tagline}}
+        <p class="hero-description">{{studyGroup.tagline}}</p>
+        {{/if}}
+
+        <!-- Meta Information -->
+        <div class="hero-meta">
+          <div class="meta-item">
+            <i class="fa fa-users"></i>
+            <span><strong>{{memberCount}}</strong> members</span>
+          </div>
+          <div class="meta-item">
+            <i class="fa fa-calendar"></i>
+            <span>Created {{formatDate studyGroup.createdAt}}</span>
+          </div>
+          {{#if lastActivity}}
+          <div class="meta-item">
+            <i class="fa fa-clock"></i>
+            <span>Active {{lastActivity}}</span>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- LIVE PRESENCE BAR -->
+    <!-- ============================================ -->
+    {{#if onlineMembers.length}}
+    <div class="live-presence-bar">
+      <div class="presence-pulse"></div>
+      <div class="presence-text">
+        <strong>{{onlineMembers.length}}</strong> {{pluralize onlineMembers.length "member" "members"}} online now
+      </div>
+      <div class="presence-avatars">
+        {{#each onlineMembers}}
+          <img src="{{avatar}}" alt="{{username}}" class="presence-avatar" title="{{username}}">
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT GRID -->
+    <!-- ============================================ -->
+    <div class="content-grid-premium">
+      
+      <!-- ============================================ -->
+      <!-- MAIN CONTENT AREA -->
+      <!-- ============================================ -->
+      <main class="content-main">
+        
+        <!-- Premium Tabs Navigation -->
+        <div class="premium-tabs" role="tablist" aria-label="Group content tabs">
+          <button class="tab-button {{#if isActiveTab 'about'}}active{{/if}}" 
+                  data-tab="about" 
+                  role="tab"
+                  aria-selected="{{#if isActiveTab 'about'}}true{{else}}false{{/if}}"
+                  aria-controls="tab-about">
+            <i class="fa fa-info-circle"></i>
+            <span>About</span>
+          </button>
+          
+          <button class="tab-button {{#if isActiveTab 'members'}}active{{/if}}" 
+                  data-tab="members"
+                  role="tab"
+                  aria-selected="{{#if isActiveTab 'members'}}true{{else}}false{{/if}}"
+                  aria-controls="tab-members">
+            <i class="fa fa-users"></i>
+            <span>Members</span>
+            <span class="tab-badge">{{memberCount}}</span>
+          </button>
+          
+          <button class="tab-button {{#if isActiveTab 'hangouts'}}active{{/if}}" 
+                  data-tab="hangouts"
+                  role="tab"
+                  aria-selected="{{#if isActiveTab 'hangouts'}}true{{else}}false{{/if}}"
+                  aria-controls="tab-hangouts">
+            <i class="fa fa-video-camera"></i>
+            <span>Hangouts</span>
+            {{#if upcomingHangoutsCount}}
+            <span class="tab-badge badge-primary">{{upcomingHangoutsCount}}</span>
+            {{/if}}
+          </button>
+          
+          <button class="tab-button {{#if isActiveTab 'resources'}}active{{/if}}" 
+                  data-tab="resources"
+                  role="tab"
+                  aria-selected="{{#if isActiveTab 'resources'}}true{{else}}false{{/if}}"
+                  aria-controls="tab-resources">
+            <i class="fa fa-book"></i>
+            <span>Resources</span>
+            {{#if resourcesCount}}
+            <span class="tab-badge">{{resourcesCount}}</span>
+            {{/if}}
+          </button>
+          
+          <button class="tab-button {{#if isActiveTab 'activity'}}active{{/if}}" 
+                  data-tab="activity"
+                  role="tab"
+                  aria-selected="{{#if isActiveTab 'activity'}}true{{else}}false{{/if}}"
+                  aria-controls="tab-activity">
+            <i class="fa fa-history"></i>
+            <span>Activity</span>
+          </button>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TAB PANELS -->
+        <!-- ============================================ -->
+        
+        <!-- ABOUT TAB -->
+        <div id="tab-about" 
+             class="tab-panel {{#if isActiveTab 'about'}}active{{/if}}"
+             role="tabpanel"
+             aria-labelledby="tab-about">
+          <div class="premium-card">
+            <h2>About This Group</h2>
+            {{#if studyGroup.description}}
+              <div class="group-description">{{{studyGroup.description}}}</div>
+            {{else}}
+              <div class="empty-state-premium">
+                <div class="empty-illustration">
+                  <i class="fa fa-file-text-o"></i>
+                </div>
+                <h3 class="empty-title">No description yet</h3>
+                <p class="empty-description">
+                  The group organizers haven't added a description yet.
+                </p>
+              </div>
+            {{/if}}
+          </div>
+
+          <!-- Group Details Card -->
+          {{#if studyGroup.details}}
+          <div class="premium-card">
+            <h3>Details</h3>
+            <div class="details-list">
+              {{#if studyGroup.tags}}
+              <div class="detail-item">
+                <strong>Topics:</strong>
+                <div class="tags-list">
+                  {{#each studyGroup.tags}}
+                    <span class="badge-premium badge-primary">{{this}}</span>
+                  {{/each}}
+                </div>
+              </div>
+              {{/if}}
+              
+              {{#if studyGroup.meetingTime}}
+              <div class="detail-item">
+                <strong>Meeting Time:</strong>
+                <span>{{studyGroup.meetingTime}}</span>
+              </div>
+              {{/if}}
+              
+              {{#if studyGroup.timezone}}
+              <div class="detail-item">
+                <strong>Timezone:</strong>
+                <span>{{studyGroup.timezone}}</span>
+              </div>
+              {{/if}}
+            </div>
+          </div>
+          {{/if}}
+        </div>
+
+        <!-- MEMBERS TAB -->
+        <div id="tab-members" 
+             class="tab-panel {{#if isActiveTab 'members'}}active{{/if}}"
+             role="tabpanel"
+             aria-labelledby="tab-members">
+          
+          <!-- Search Bar -->
+          <div class="premium-search-bar">
+            <i class="fa fa-search search-icon"></i>
+            <input type="text" 
+                   class="search-input" 
+                   placeholder="Search members..."
+                   aria-label="Search members">
+            <button class="search-clear" aria-label="Clear search">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+
+          <!-- Filter Bar -->
+          <div class="premium-filter-bar">
+            <span class="filter-label">Filter:</span>
+            <button class="filter-chip active" data-filter="all">All</button>
+            <button class="filter-chip" data-filter="organizers">Organizers</button>
+            <button class="filter-chip" data-filter="online">Online</button>
+          </div>
+
+          <!-- Members Grid -->
+          {{#if members.length}}
+          <div class="members-grid-premium">
+            {{#each members}}
+            <a href="/profile/{{username}}" class="member-card-premium">
+              <img src="{{avatar}}" alt="{{username}}" class="member-avatar-premium">
+              <h4 class="member-name-premium">{{username}}</h4>
+              {{#if role}}
+              <span class="member-role-badge role-{{role}}">
+                <i class="fa fa-{{roleIcon role}}"></i>
+                {{role}}
+              </span>
+              {{/if}}
+            </a>
+            {{/each}}
+          </div>
+          {{else}}
+          <div class="empty-state-premium">
+            <div class="empty-illustration">
+              <i class="fa fa-users"></i>
+            </div>
+            <h3 class="empty-title">No members yet</h3>
+            <p class="empty-description">
+              Be the first to join this study group!
+            </p>
+            <div class="empty-action">
+              <button class="premium-button btn-primary join-btn">
+                <i class="fa fa-user-plus"></i>
+                <span>Join Group</span>
+              </button>
+            </div>
+          </div>
+          {{/if}}
+        </div>
+
+        <!-- HANGOUTS TAB -->
+        <div id="tab-hangouts" 
+             class="tab-panel {{#if isActiveTab 'hangouts'}}active{{/if}}"
+             role="tabpanel"
+             aria-labelledby="tab-hangouts">
+          
+          {{#if isMember}}
+          <div class="tab-header-actions">
+            <button class="premium-button btn-primary create-hangout-btn">
+              <i class="fa fa-plus"></i>
+              <span>Create Hangout</span>
+            </button>
+          </div>
+          {{/if}}
+
+          {{#if hangouts.length}}
+          <div class="hangouts-list">
+            {{#each hangouts}}
+            <div class="premium-card card-interactive hangout-card">
+              <div class="hangout-header">
+                <h3>{{topic}}</h3>
+                <span class="badge-premium badge-{{statusClass}}">{{status}}</span>
+              </div>
+              <p class="hangout-description">{{description}}</p>
+              <div class="hangout-meta">
+                <div class="meta-item">
+                  <i class="fa fa-calendar"></i>
+                  <span>{{formatDateTime start}}</span>
+                </div>
+                <div class="meta-item">
+                  <i class="fa fa-user"></i>
+                  <span>by {{hostUsername}}</span>
+                </div>
+              </div>
+              <div class="hangout-actions">
+                <a href="/hangout/{{_id}}" class="premium-button btn-secondary">
+                  View Details
+                </a>
+                {{#if canJoin}}
+                <button class="premium-button btn-primary">
+                  <i class="fa fa-video-camera"></i>
+                  <span>Join</span>
+                </button>
+                {{/if}}
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+          <div class="empty-state-premium">
+            <div class="empty-illustration">
+              <i class="fa fa-video-camera"></i>
+            </div>
+            <h3 class="empty-title">No hangouts scheduled</h3>
+            <p class="empty-description">
+              {{#if isMember}}
+                Create the first hangout to get the conversation started!
+              {{else}}
+                Join the group to see and create hangouts.
+              {{/if}}
+            </p>
+            {{#if isMember}}
+            <div class="empty-action">
+              <button class="premium-button btn-primary create-hangout-btn">
+                <i class="fa fa-plus"></i>
+                <span>Create Hangout</span>
+              </button>
+            </div>
+            {{/if}}
+          </div>
+          {{/if}}
+        </div>
+
+        <!-- RESOURCES TAB -->
+        <div id="tab-resources" 
+             class="tab-panel {{#if isActiveTab 'resources'}}active{{/if}}"
+             role="tabpanel"
+             aria-labelledby="tab-resources">
+          
+          {{#if isMember}}
+          <div class="tab-header-actions">
+            <button class="premium-button btn-primary add-resource-btn">
+              <i class="fa fa-plus"></i>
+              <span>Add Resource</span>
+            </button>
+          </div>
+          {{/if}}
+
+          {{#if resources.length}}
+          <div class="resources-list">
+            {{#each resources}}
+            <div class="premium-card card-interactive resource-card">
+              <div class="resource-icon">
+                <i class="fa fa-{{getResourceIcon type}}"></i>
+              </div>
+              <div class="resource-content">
+                <h4>{{title}}</h4>
+                <p>{{description}}</p>
+                <div class="resource-meta">
+                  <span>Added by {{authorUsername}}</span>
+                  <span>•</span>
+                  <span>{{formatDate createdAt}}</span>
+                </div>
+              </div>
+              <a href="{{url}}" target="_blank" class="premium-button btn-secondary btn-sm">
+                <i class="fa fa-external-link"></i>
+                <span>Open</span>
+              </a>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+          <div class="empty-state-premium">
+            <div class="empty-illustration">
+              <i class="fa fa-book"></i>
+            </div>
+            <h3 class="empty-title">No resources yet</h3>
+            <p class="empty-description">
+              {{#if isMember}}
+                Share helpful resources with the group!
+              {{else}}
+                Join the group to see and share resources.
+              {{/if}}
+            </p>
+            {{#if isMember}}
+            <div class="empty-action">
+              <button class="premium-button btn-primary add-resource-btn">
+                <i class="fa fa-plus"></i>
+                <span>Add Resource</span>
+              </button>
+            </div>
+            {{/if}}
+          </div>
+          {{/if}}
+        </div>
+
+        <!-- ACTIVITY TAB -->
+        <div id="tab-activity" 
+             class="tab-panel {{#if isActiveTab 'activity'}}active{{/if}}"
+             role="tabpanel"
+             aria-labelledby="tab-activity">
+          
+          {{#if activities.length}}
+          <div class="activity-feed-premium">
+            {{#each activities}}
+            <div class="activity-item">
+              <div class="activity-icon icon-{{type}}">
+                <i class="fa fa-{{getActivityIcon type}}"></i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-text">
+                  {{{formatActivity this}}}
+                </div>
+                <div class="activity-time">{{formatTimeAgo timestamp}}</div>
+              </div>
+            </div>
+            {{/each}}
+            
+            {{#if hasMoreActivities}}
+            <button class="premium-button btn-ghost activity-load-more">
+              Load More Activity
+            </button>
+            {{/if}}
+          </div>
+          {{else}}
+          <div class="empty-state-premium">
+            <div class="empty-illustration">
+              <i class="fa fa-history"></i>
+            </div>
+            <h3 class="empty-title">No activity yet</h3>
+            <p class="empty-description">
+              Group activity will appear here as members interact.
+            </p>
+          </div>
+          {{/if}}
+        </div>
+
+      </main>
+
+      <!-- ============================================ -->
+      <!-- SIDEBAR -->
+      <!-- ============================================ -->
+      <aside class="premium-sidebar">
+        
+        <!-- Organizers Card -->
+        <div class="premium-card">
+          <h3>
+            <i class="fa fa-star"></i>
+            Organizers
+          </h3>
+          {{#if organizers.length}}
+          <div class="organizers-grid">
+            {{#each organizers}}
+            <a href="/profile/{{username}}" class="organizer-card">
+              <img src="{{avatar}}" alt="{{username}}" class="organizer-avatar">
+              <span class="organizer-name">{{username}}</span>
+              <span class="organizer-role">
+                <i class="fa fa-crown"></i>
+                {{role}}
+              </span>
+            </a>
+            {{/each}}
+          </div>
+          {{/if}}
+        </div>
+
+        <!-- Online Members Card -->
+        {{#if onlineMembers.length}}
+        <div class="premium-card">
+          <h3>
+            <i class="fa fa-circle" style="color: var(--success);"></i>
+            Online Now
+          </h3>
+          <div class="online-members-list">
+            {{#each onlineMembers}}
+            <a href="/profile/{{username}}" class="member-item">
+              <img src="{{avatar}}" alt="{{username}}" class="member-avatar">
+              <div class="member-info">
+                <div class="member-name">{{username}}</div>
+                {{#if status}}
+                <div class="member-status">{{status}}</div>
+                {{/if}}
+              </div>
+              {{#if badge}}
+              <span class="member-badge">{{badge}}</span>
+              {{/if}}
+            </a>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        <!-- Quick Stats Card -->
+        <div class="premium-card">
+          <h3>
+            <i class="fa fa-bar-chart"></i>
+            Quick Stats
+          </h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-icon" style="background: var(--brand-primary);">
+                <i class="fa fa-users"></i>
+              </div>
+              <div class="stat-value">{{memberCount}}</div>
+              <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon" style="background: var(--success);">
+                <i class="fa fa-video-camera"></i>
+              </div>
+              <div class="stat-value">{{hangoutsCount}}</div>
+              <div class="stat-label">Hangouts</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon" style="background: var(--warning);">
+                <i class="fa fa-book"></i>
+              </div>
+              <div class="stat-value">{{resourcesCount}}</div>
+              <div class="stat-label">Resources</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon" style="background: var(--info);">
+                <i class="fa fa-comments"></i>
+              </div>
+              <div class="stat-value">{{activityCount}}</div>
+              <div class="stat-label">Activities</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Join/Leave Actions -->
+        {{#unless studyGroup.archived}}
+        <div class="premium-card">
+          {{#if isMember}}
+            <button class="premium-button btn-danger leave-group-btn" style="width: 100%;">
+              <i class="fa fa-sign-out"></i>
+              <span>Leave Group</span>
+            </button>
+          {{else}}
+            <button class="premium-button btn-primary join-group-btn" style="width: 100%;">
+              <i class="fa fa-user-plus"></i>
+              <span>Join Group</span>
+            </button>
+          {{/if}}
+        </div>
+        {{/unless}}
+
+      </aside>
+
+    </div>
+
+    <!-- ============================================ -->
+    <!-- QUICK ACTIONS FLOATING TOOLBAR -->
+    <!-- ============================================ -->
+    <div class="quick-actions-toolbar">
+      {{#if isMember}}
+      <button class="quick-action-btn" data-tooltip="Invite members" aria-label="Invite members">
+        <i class="fa fa-user-plus"></i>
+      </button>
+      <button class="quick-action-btn" data-tooltip="Create hangout" aria-label="Create hangout">
+        <i class="fa fa-video-camera"></i>
+      </button>
+      {{/if}}
+      <button class="quick-action-btn scroll-to-top" data-tooltip="Scroll to top" aria-label="Scroll to top">
+        <i class="fa fa-arrow-up"></i>
+      </button>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TOAST NOTIFICATIONS CONTAINER -->
+    <!-- ============================================ -->
+    <div class="toast-container" role="status" aria-live="polite"></div>
+
+  </div>
+</template>

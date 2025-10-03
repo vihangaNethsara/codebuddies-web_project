@@ -1,0 +1,443 @@
+<!--
+  ============================================
+  MODERN SINGLE STUDY GROUP TEMPLATE
+  ============================================
+  A complete redesign with professional UI/UX
+  
+  Features:
+  - Clean, card-based layout
+  - Sticky action bar with primary actions
+  - Organized tabs with logical grouping
+  - Responsive design (mobile-first)
+  - Accessible components
+  - Modern animations
+  
+  Author: Professional Full-Stack Developer
+  Date: 2025
+  ============================================
+-->
+
+<template name="singleStudyGroupModern">
+  {{#if Template.subscriptionsReady}}
+    {{#with studyGroup}}
+      <div class="study-group-modern-wrapper">
+        
+        <!-- Modern Breadcrumb Navigation -->
+        <div class="container">
+          <nav class="modern-breadcrumb">
+            <div class="breadcrumb-item">
+              {{#unless isInRole 'owner, moderator, member' _id}}
+                <a href="{{pathFor 'all study groups'}}">
+                  <i class="fas fa-users"></i>
+                  Study Groups
+                </a>
+              {{else}}
+                <a href="{{pathFor 'my study groups'}}">
+                  <i class="fas fa-bookmark"></i>
+                  My Study Groups
+                </a>
+              {{/unless}}
+            </div>
+            <div class="breadcrumb-item">
+              <span class="separator"><i class="fas fa-chevron-right"></i></span>
+            </div>
+            <div class="breadcrumb-item active">
+              {{title}}
+            </div>
+          </nav>
+        </div>
+
+        <!-- Check if archived -->
+        {{#unless visibility}}
+          <div class="container">
+            <div class="content-card text-center">
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="fas fa-archive"></i>
+                </div>
+                <h2 class="empty-title">This study group has been archived</h2>
+                <p class="empty-description">
+                  This group is no longer active. You can browse other active study groups.
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                  <a href="{{pathFor 'all study groups'}}" class="empty-action">
+                    <i class="fas fa-search"></i>
+                    Browse Study Groups
+                  </a>
+                  <a href="{{pathFor 'home'}}" class="empty-action" style="background: var(--muted, #6b7280);">
+                    <i class="fas fa-home"></i>
+                    Go Home
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        {{else}}
+          <!-- Hero Section - Group Header -->
+          <section class="study-group-hero">
+            <div class="container">
+              <div class="hero-content">
+                
+                <!-- Archived Badge (if applicable) -->
+                {{#if equals visibility false}}
+                  <div class="group-status-badge">
+                    <i class="fas fa-archive"></i> Archived
+                  </div>
+                {{/if}}
+
+                <!-- Group Title -->
+                <div class="group-title-section">
+                  <h1>{{title}}</h1>
+                  {{#if isInRole 'owner, admin' _id}}
+                    <button class="btn-edit-title" id="editTitle" title="Edit title">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  {{/if}}
+                </div>
+
+                <!-- Group Tagline -->
+                <div class="group-tagline">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>{{tagline}}</span>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          <!-- Sticky Action Bar -->
+          <div class="study-group-action-bar">
+            <div class="container">
+              <div class="action-bar-content">
+                
+                <!-- Primary Actions -->
+                <div class="primary-actions">
+                  {{#unless isInRole 'owner, admin, moderator, member' _id}}
+                    <!-- Join Button (for non-members) -->
+                    <button class="btn-action btn-primary {{#if currentUser}}joinStudyGroup{{else}}continue-popup{{/if}}">
+                      <i class="fas fa-user-plus"></i>
+                      <span>Join Study Group</span>
+                    </button>
+                  {{else}}
+                    <!-- Leave Button (for members) -->
+                    {{#if isInRole 'admin, moderator, member' _id}}
+                      <button class="btn-action btn-danger leaveStudyGroup">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Leave Group</span>
+                      </button>
+                    {{/if}}
+                  {{/unless}}
+
+                  <!-- Create Hangout Button -->
+                  {{#if isInRole 'owner, admin, moderator' _id}}
+                    <button class="btn-action btn-secondary {{#unless currentUser}}continue-popup{{/unless}}" 
+                            id="{{#if currentUser}}newHangout{{/if}}">
+                      <i class="fas fa-video"></i>
+                      <span>Create Hangout</span>
+                    </button>
+                  {{else}}
+                    {{#if isInRole 'owner, admin, moderator, member' _id}}
+                      {{#if equals exempt_from_default_permission true}}
+                        <button class="btn-action btn-secondary {{#unless currentUser}}continue-popup{{/unless}}" 
+                                id="{{#if currentUser}}newHangout{{/if}}">
+                          <i class="fas fa-video"></i>
+                          <span>Create Hangout</span>
+                        </button>
+                      {{/if}}
+                    {{/if}}
+                  {{/if}}
+                </div>
+
+                <!-- Secondary Actions -->
+                <div class="secondary-actions">
+                  <!-- Member Count Badge -->
+                  <div class="member-count">
+                    <i class="fas fa-users"></i>
+                    <span class="count">{{ members.length }}</span>
+                    <span>members</span>
+                  </div>
+
+                  <!-- Share Button -->
+                  <button class="btn-action btn-icon-only" id="shareGroup" title="Share group">
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+
+                  <!-- Bookmark Button -->
+                  {{#if currentUser}}
+                    <button class="btn-action btn-icon-only" id="bookmarkGroup" title="Bookmark group">
+                      <i class="far fa-bookmark"></i>
+                    </button>
+                  {{/if}}
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Content Area -->
+          <div class="container">
+            <div class="study-group-content">
+              
+              <!-- Left Column - Main Content -->
+              <div class="main-content-area">
+                
+                <!-- Modern Tab Navigation -->
+                <nav class="modern-tabs" role="tablist">
+                  <!-- Overview Tab -->
+                  <button class="tab-item active" data-tab="overview" role="tab" aria-selected="true">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Overview</span>
+                  </button>
+
+                  <!-- 24/7 Hangout Tab -->
+                  <button class="tab-item" data-tab="hangout247" role="tab">
+                    <i class="fas fa-video"></i>
+                    <span>24/7 Hangout</span>
+                    {{#if numParticipants}}
+                      <span class="badge">{{numParticipants}}</span>
+                    {{/if}}
+                  </button>
+
+                  <!-- Hangouts Tab -->
+                  <button class="tab-item" data-tab="hangouts" role="tab">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Hangouts</span>
+                  </button>
+
+                  <!-- Members Tab -->
+                  <button class="tab-item" data-tab="members" role="tab">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Members</span>
+                    <span class="badge">{{ members.length }}</span>
+                  </button>
+
+                  <!-- Resources Tab -->
+                  <button class="tab-item" data-tab="resources" role="tab">
+                    <i class="fas fa-link"></i>
+                    <span>Resources</span>
+                    <span class="badge">{{ resourcesCount }}</span>
+                  </button>
+
+                  <!-- Learnings Tab -->
+                  <button class="tab-item" data-tab="learnings" role="tab">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Learnings</span>
+                    <span class="badge">{{ learningsCount }}</span>
+                  </button>
+
+                  {{#if currentUser}}
+                    <!-- Activity Tab (Members Only) -->
+                    <button class="tab-item" data-tab="activity" role="tab">
+                      <i class="fas fa-rss"></i>
+                      <span>Activity</span>
+                    </button>
+
+                    <!-- Availability Tab (Members Only) -->
+                    <button class="tab-item" data-tab="availability" role="tab">
+                      <i class="fas fa-clock"></i>
+                      <span>Availability</span>
+                    </button>
+
+                    <!-- Discussion Tab (Members Only) -->
+                    <button class="tab-item" data-tab="discussion" role="tab">
+                      <i class="fas fa-comments"></i>
+                      <span>Discussion</span>
+                    </button>
+                  {{/if}}
+
+                  {{#if isInRole 'owner, moderator' _id}}
+                    <!-- Settings Tab (Owners/Moderators Only) -->
+                    <button class="tab-item" data-tab="settings" role="tab">
+                      <i class="fas fa-cog"></i>
+                      <span>Settings</span>
+                    </button>
+                  {{/if}}
+                </nav>
+
+                <!-- Tab Content -->
+                <div class="tab-content-modern">
+                  
+                  <!-- Overview Tab Content -->
+                  <div class="tab-pane-modern active" id="overview" role="tabpanel">
+                    {{> studyGroupDescription}}
+                  </div>
+
+                  <!-- 24/7 Hangout Tab Content -->
+                  <div class="tab-pane-modern" id="hangout247" role="tabpanel">
+                    <div class="content-card">
+                      <div class="hangout-section">
+                        {{#unless isInRole 'owner, admin, moderator, member' _id}}
+                          <div class="hangout-locked">
+                            <img src="/images/click_to_load_hangout2.jpg" alt="Hangout preview" class="load-hangout-screenshot">
+                            <p class="lock-message">
+                              <i class="fas fa-lock"></i>
+                              Please join the study group to access the 24/7 hangout room.
+                            </p>
+                          </div>
+                        {{else}}
+                          <div class="hangout-embed-container">
+                            {{> hangoutFrame }}
+                          </div>
+                          <div class="hangout-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Always Open:</strong> This room is available 24/7 for group members to chat, study, or collaborate!
+                          </div>
+                        {{/unless}}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Hangouts Tab Content -->
+                  <div class="tab-pane-modern" id="hangouts" role="tabpanel">
+                    {{> studyGroupHangouts}}
+                  </div>
+
+                  <!-- Members Tab Content -->
+                  <div class="tab-pane-modern" id="members" role="tabpanel">
+                    {{> studyGroupMembers}}
+                  </div>
+
+                  <!-- Resources Tab Content -->
+                  <div class="tab-pane-modern" id="resources" role="tabpanel">
+                    {{> studyGroupResources}}
+                  </div>
+
+                  <!-- Learnings Tab Content -->
+                  <div class="tab-pane-modern" id="learnings" role="tabpanel">
+                    {{> studyGroupLearnings}}
+                  </div>
+
+                  {{#if currentUser}}
+                    <!-- Activity Tab Content -->
+                    <div class="tab-pane-modern" id="activity" role="tabpanel">
+                      {{> studyGroupActivities}}
+                    </div>
+
+                    <!-- Availability Tab Content -->
+                    <div class="tab-pane-modern" id="availability" role="tabpanel">
+                      {{> studyGroupAvailability}}
+                    </div>
+
+                    <!-- Discussion Tab Content -->
+                    <div class="tab-pane-modern" id="discussion" role="tabpanel">
+                      {{> studyGroupDiscussion}}
+                    </div>
+                  {{/if}}
+
+                  {{#if isInRole 'owner, admin' _id}}
+                    <!-- Settings Tab Content -->
+                    <div class="tab-pane-modern" id="settings" role="tabpanel">
+                      {{> studyGroupSettings}}
+                    </div>
+                  {{/if}}
+
+                </div>
+              </div>
+
+              <!-- Right Column - Sidebar -->
+              <aside class="group-sidebar">
+                
+                <!-- Organizers Card -->
+                <div class="quick-info-card organizers-card">
+                  <h3 class="card-title">
+                    <i class="fas fa-crown"></i>
+                    Organizers
+                  </h3>
+                  <div class="organizer-grid">
+                    {{#each members}}
+                      {{#if isOrganizers role}}
+                        <a href="{{pathFor 'profile' name=name userId=id}}" 
+                           class="organizer-item {{#unless currentUser}}continue-popup{{/unless}}"
+                           title="{{name}}">
+                          <img src="{{avatar}}" 
+                               alt="{{name}}" 
+                               class="organizer-avatar">
+                          <span class="organizer-name">{{name}}</span>
+                        </a>
+                      {{/if}}
+                    {{/each}}
+                  </div>
+                </div>
+
+                <!-- Online Members Card -->
+                <div class="quick-info-card online-members-card">
+                  <h3 class="card-title">
+                    <span class="online-indicator"></span>
+                    Online Now
+                  </h3>
+                  {{> studyGroupOnlineMembers}}
+                </div>
+
+                <!-- Quick Stats Card -->
+                <div class="quick-info-card">
+                  <h3 class="card-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Quick Stats
+                  </h3>
+                  <ul class="info-list">
+                    <li>
+                      <i class="fas fa-users"></i>
+                      <strong>Members:</strong>
+                      <span class="value">{{ members.length }}</span>
+                    </li>
+                    <li>
+                      <i class="fas fa-link"></i>
+                      <strong>Resources:</strong>
+                      <span class="value">{{ resourcesCount }}</span>
+                    </li>
+                    <li>
+                      <i class="fas fa-lightbulb"></i>
+                      <strong>Learnings:</strong>
+                      <span class="value">{{ learningsCount }}</span>
+                    </li>
+                    <li>
+                      <i class="fas fa-globe"></i>
+                      <strong>Online Users:</strong>
+                      <span class="value">{{ usersOnlineCount }}</span>
+                    </li>
+                  </ul>
+                </div>
+
+              </aside>
+
+            </div>
+          </div>
+
+        {{/unless}}
+
+      </div>
+
+    {{else}}
+      <!-- Group Not Found -->
+      <div class="container">
+        <div class="content-card text-center">
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 class="empty-title">Study Group Not Found</h2>
+            <p class="empty-description">
+              The study group you're looking for doesn't exist or has been removed.
+            </p>
+            <a href="{{pathFor 'all study groups'}}" class="empty-action">
+              <i class="fas fa-arrow-left"></i>
+              Back to Study Groups
+            </a>
+          </div>
+        </div>
+      </div>
+    {{/with}}
+
+  {{else}}
+    <!-- Loading State -->
+    <div class="container" style="padding: 3rem 0;">
+      <div class="content-card">
+        <div class="loading-skeleton skeleton-title"></div>
+        <div class="loading-skeleton skeleton-text"></div>
+        <div class="loading-skeleton skeleton-text"></div>
+        <div class="loading-skeleton skeleton-text"></div>
+      </div>
+    </div>
+  {{/if}}
+</template>
