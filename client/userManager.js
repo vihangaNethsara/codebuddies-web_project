@@ -25,7 +25,7 @@ UserManager = {
           callback(error);
         } else {
           Session.set("userSessionToken", result.sessionToken);
-          Session.set("currentUser", result.user);
+          Session.set("currentUser", result.user); // includes roles
           localStorage.setItem("codebuddies_session", result.sessionToken);
           callback(null, result.user);
         }

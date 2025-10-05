@@ -1,0 +1,123 @@
+<template name="userProfile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        
+        {{#if isLoggingIn}}
+          <div class="profile-loading">
+            <div class="text-center">
+              <i class="fas fa-spinner fa-spin fa-2x"></i>
+              <p>Loading...</p>
+            </div>
+          </div>
+        {{else}}
+          {{#if isLoggedIn}}
+            {{#if currentUser}}
+              <!-- Profile Header -->
+              <div class="profile-header">
+                <div class="profile-avatar-section">
+                  {{#if userAvatar}}
+                    <img src="{{userAvatar}}" alt="{{currentUser.username}}" class="profile-avatar">
+                  {{else}}
+                    <div class="default-avatar">
+                      <i class="fas fa-user"></i>
+                    </div>
+                  {{/if}}
+                </div>
+                <div class="profile-info-section">
+                  <h1 class="profile-title">
+                    {{#if currentUser.profile.name}}
+                      {{currentUser.profile.name}}
+                    {{else}}
+                      {{currentUser.username}}
+                    {{/if}}
+                  </h1>
+                  <p class="profile-username">@{{currentUser.username}}</p>
+                  {{#if memberSince}}
+                    <p class="member-since">Member since {{memberSince}}</p>
+                  {{/if}}
+                </div>
+              </div>
+
+              <!-- Profile Content -->
+              <div class="profile-content">
+                <!-- Personal Information -->
+                <div class="profile-section">
+                  <h3>Personal Information</h3>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <label>Username</label>
+                      <span>{{currentUser.username}}</span>
+                    </div>
+                    {{#if userEmail}}
+                      <div class="info-item">
+                        <label>Email</label>
+                        <span>{{userEmail}}</span>
+                      </div>
+                    {{/if}}
+                    {{#if currentUser.profile.name}}
+                      <div class="info-item">
+                        <label>Full Name</label>
+                        <span>{{currentUser.profile.name}}</span>
+                      </div>
+                    {{/if}}
+                  </div>
+                  {{#if currentUser.profile.bio}}
+                    <div class="bio-section">
+                      <label>Bio</label>
+                      <p class="bio-text">{{currentUser.profile.bio}}</p>
+                    </div>
+                  {{/if}}
+                </div>
+
+                <!-- Quick Links -->
+                <div class="profile-section">
+                  <h3>Quick Actions</h3>
+                  <div class="action-links">
+                    <a href="/profile/{{currentUser.username}}/{{currentUser._id}}/account-settings" class="action-link primary">
+                      <i class="fas fa-cog"></i>
+                      Edit Profile Settings
+                    </a>
+                    <a href="/profile/{{currentUser.username}}/{{currentUser._id}}" class="action-link">
+                      <i class="fas fa-eye"></i>
+                      View Public Profile
+                    </a>
+                    <a href="/my-study-groups" class="action-link">
+                      <i class="fas fa-users"></i>
+                      My Study Groups
+                    </a>
+                    <a href="/notifications" class="action-link">
+                      <i class="fas fa-bell"></i>
+                      Notifications
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+            {{else}}
+              <div class="profile-loading">
+                <div class="text-center">
+                  <p>Loading user data...</p>
+                </div>
+              </div>
+            {{/if}}
+          {{else}}
+            <!-- Not Logged In State -->
+            <div class="not-logged-in">
+              <div class="welcome-section">
+                <i class="fas fa-user-circle welcome-icon"></i>
+                <h2>Welcome to CodeBuddies</h2>
+                <p>Please log in to view your profile and connect with fellow learners.</p>
+                <div class="auth-actions">
+                  <a href="/login" class="btn btn-primary">Log In</a>
+                  <a href="/signup" class="btn btn-outline">Sign Up</a>
+                </div>
+              </div>
+            </div>
+          {{/if}}
+        {{/if}}
+        
+      </div>
+    </div>
+  </div>
+</template>

@@ -123,10 +123,10 @@ Template.allStudyGroups.helpers({
           groups = groups.filter(g => g.activityLevel === "very-active" || g.activityLevel === "active");
           break;
         case "my":
-          groups = groups.filter(g => g.members?.includes(Meteor.userId()));
+          groups = groups.filter(g => g.members && g.members.includes(Meteor.userId()));
           break;
         case "featured":
-          groups = groups.filter(g => g.members?.length >= 10);
+          groups = groups.filter(g => g.members && g.members.length >= 10);
           break;
       }
     }

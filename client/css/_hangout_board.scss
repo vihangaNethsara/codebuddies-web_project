@@ -1,15 +1,17 @@
 #hangout-board {
-    .study-group-tag {
-        z-index: 1;
-        color: rgb(30, 144, 255);
-        position: absolute;
-        margin: 15px 0 0 10px;
-        border: 1px solid #1e90ff;
-        font-size: 11px;
-        background: rgb(255, 255, 255);
-    }
+  .study-group-tag {
+    z-index: 1;
+    color: $cta-blue;             // coral accent
+    position: absolute;
+    margin: 15px 0 0 10px;
+    border: 1px solid $cta-blue;  // coral border
+    font-size: 11px;
+    background: $bg-white;        // dark card background (#1F1F1F)
+    color: $white;                // text color for modern dark theme
+  }
+
   .hangout-card {
-    background: $bg-white;
+    background: $bg-white;        // card background (#1F1F1F)
     cursor: pointer;
     display: inline-block;
     height: 100%;
@@ -20,9 +22,13 @@
 
     .hangout-date {
       margin: 0;
+      color: $primary-grey;       // light text
     }
 
-    .details-extra { right: 10px;}
+    .details-extra {
+      right: 10px;
+      color: $secondary-grey;
+    }
   }
 
   .hangout-card:hover {
@@ -30,31 +36,46 @@
   }
 
   .board-top {
-    background: linear-gradient(to top, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .55) 18%, rgba(30, 144, 255, .64) 46%, rgba(3, 87, 232, .8) 100%), url(/images/language-logos.svg) center repeat;
+    background: linear-gradient(
+      to top,
+      rgba(255,127,80,0.5) 0%,   // coral gradient
+      rgba(255,127,80,0.55) 18%,
+      rgba(255,127,80,0.64) 46%,
+      rgba(255,127,80,0.8) 100%
+    ),
+    url(/images/language-logos.svg) center repeat;
     padding: 100px 0;
-    h2 { @include font-face(700, 32px, bold, $bg-white); }
+
+    h2 {
+      @include font-face(700, 32px, bold, $white); // light text
+      text-align: center;
+    }
   }
 
   .board-middle {
     padding: 20px 0;
-    h2 { @include font-face(700, 32px, bold, $primary-grey); }
+
+    h2 {
+      @include font-face(700, 32px, bold, $primary-grey);
+      text-align: center;
+    }
   }
 
   .hangout-board {
-    h3 { margin: 0;}
+    h3 { 
+      margin: 0; 
+      color: $primary-grey;
+    }
 
     .hangout-filter-block {
       margin-bottom: 20px;
       margin-top: 10px;
     }
-
   }
 
   .hangout-header-block {
     height: 100px;
     padding: 0;
-
-    @include font-face(400, 17px, normal, $cta-blue);
+    @include font-face(400, 17px, normal, $cta-blue); // coral accent
   }
-
 }

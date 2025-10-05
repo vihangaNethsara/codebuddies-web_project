@@ -13,8 +13,9 @@
   @media screen and (max-width: 389px) {
     height: 320px;
   }
+
   border-radius: 0 !important;
-  background: $white;
+  background: $bg-white;          // dark card background (#1F1F1F)
   display: inline-flex;
   flex-direction: column;
   justify-content: space-between;
@@ -24,6 +25,7 @@
   padding: 15px 20px;
   overflow: hidden;
   position: relative;
+  color: $primary-grey;           // default text color
 
   .card-details {
     flex: 1;
@@ -32,63 +34,69 @@
   p.overflowtext {
     color: $secondary-grey;
   }
+
   .hangout-topic {
     width: 85%;
     line-height: 30px;
     margin-top: 6px;
     margin-bottom: 10px;
-    @include font-face(600, 20px, normal, $dodgerblue);
+    @include font-face(600, 20px, normal, $cta-blue); // coral accent
     text-align: left;
     text-transform: capitalize;
+
     &.completed {
       color: $secondary-grey;
     }
   }
+
   .hangout-date {
     letter-spacing: 0.2px;
     margin: 7px 0px;
+    color: $primary-grey;
   }
+
   .hangout-meta {
     font-size: 18px;
     line-height: 1.2;
     margin: 0;
+    color: $secondary-grey;
   }
+
   button {
     display: inline;
     padding: 0 8px;
   }
+
   .btn-default {
     border: none !important;
-    color: #777;
+    color: $secondary-grey;
 
     &:hover, &:focus, &:active {
-      color: #777;
+      color: $secondary-grey;
       border: none !important;
       background: none !important;
     }
   }
+
   .join-now {
     width: 65%;
   }
+
   .card-header-wrapper {
-    // flex parent
     display: flex;
     padding: 5px 0px;
     align-items: center;
     width: 100%;
 
     .left-section {
-      // flex child
       width: 60%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       display: flex;
-      // also a flex container/parent
     }
 
     .right-section {
-      // flex child, also a flex parent
       width: 40%;
       display: flex;
       align-items: center;
@@ -105,12 +113,13 @@
 
     .info-icon {
       font-size: 20px;
+      color: $primary-grey;
     }
   }
+
   .hangout-title-tag {
-    // flex child for .left-section flex container
     font-size: 95%;
-    border: 2px solid #1e90ff;
+    border: 2px solid $cta-blue;     // coral border
     border-radius: 4px;
     padding: 2px 12px;
     font-weight: bold;
@@ -118,38 +127,53 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: $white;
   }
+
   div.calendar {
     width: 80%;
     line-height: 1.1;
   }
+
   div.more-options {
     width: 20%;
   }
+
   .show-on-hover {
     display: none;
   }
+
   .rsvp-buttons {
     width: 100%;
-  }
-  .rsvp-buttons .btn-cb2 {
-    padding: 5px 15px;
-    width: 100%;
+
+    .btn-cb2 {
+      padding: 5px 15px;
+      width: 100%;
+      background: $cta-blue;
+      color: $white;
+
+      &:hover {
+        background: darken($cta-blue, 10%);
+        color: $black;
+      }
+    }
   }
 }
 
 .hangout-card:hover {
   @include box-shadow(0px, 12px, 60px, rgba(0, 0, 0, .5));
   .show-on-hover { display: block; }
-  h5.completed.show-on-hover { display: inline-block; line-height: 0.8;}
+  h5.completed.show-on-hover { display: inline-block; line-height: 0.8; }
   .hangout-description { display: none; }
-  .hangout-meta { display: none;}
+  .hangout-meta { display: none; }
 }
 
 .card {
   div.popover {
     overflow-wrap: break-word;
     word-wrap: break-word;
+    background: $bg-white;
+    color: $primary-grey;
   }
 }
 
@@ -159,7 +183,7 @@
 
 .hangout-in-progress-time {
   font-weight: 400;
-  color: #777 !important;
+  color: $secondary-grey !important;
   text-transform: uppercase;
   font-style: italic;
 }

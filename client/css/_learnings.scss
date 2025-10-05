@@ -1,20 +1,44 @@
 #learnings {
-    p, li {
-      @include font-face(400, 16px, normal, $primary-grey);
-      line-height: 27px;
-    }
-    .learnings-top {
-      background: linear-gradient(to top, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .5) 0%, rgba(30, 144, 255, .55) 18%, rgba(30, 144, 255, .64) 46%, rgba(3, 87, 232, .8) 100%), url(/images/language-logos.svg) center repeat;
-      padding: 100px 0;
-      h2 { @include font-face(700, 32px, bold, $bg-white); }
-    }
-  
-    .learnings-middle {
-      background: $bg-white;
-      padding: 50px 0px;
-    }
-  
-    h3 { font-weight: 200; margin: 0px 0px 15px 0px;}
-  
+  // General text
+  p, li {
+    @include font-face(400, 16px, normal, $primary-grey);
+    line-height: 27px;
   }
-  
+
+  // ---------------------------
+  // Top Section
+  // ---------------------------
+  .learnings-top {
+    background: linear-gradient(
+        to top,
+        rgba(255,127,80,0.5) 0%,
+        rgba(255,127,80,0.5) 0%,
+        rgba(255,127,80,0.5) 0%,
+        rgba(255,127,80,0.55) 18%,
+        rgba(255,127,80,0.64) 46%,
+        rgba(255,127,80,0.8) 100%
+      ),
+      url(/images/language-logos.svg) center repeat;
+    padding: 100px 0;
+
+    h2 {
+      @include font-face(700, 32px, bold, $bg-white);
+      margin: 0;
+      text-align: center;
+    }
+  }
+
+  // ---------------------------
+  // Middle Section
+  // ---------------------------
+  .learnings-middle {
+    background: $bg-white;
+    padding: 50px 0;
+  }
+
+  // Headings
+  h3 {
+    font-weight: 200;
+    margin: 0 0 15px 0;
+  }
+}

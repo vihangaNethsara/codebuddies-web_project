@@ -1,8 +1,9 @@
-Template.sysLayout.onCreated(function(){
-  var title = "administrative area | CodeBuddies ";
+Template.sysLayout.onCreated(function() {
+  var title = "Administrative Area | CodeBuddies";
   DocHead.setTitle(title);
-  var user = Meteor.userId();
+
+  // Make sure these subscriptions work
   this.subscribe("allUsers");
   this.subscribe("archivedUsers");
-
+  this.subscribe("allNotifications"); // Add if missing
 });

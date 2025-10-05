@@ -1,14 +1,23 @@
 input:focus,
 textarea:focus {
   outline: none;
+  box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.3); // subtle focus highlight
 }
 
 .status-input textarea {
   resize: vertical;
   width: 100%;
-  border: 0;
+  border: 1px solid $secondary-grey; // subtle border for input
+  border-radius: 10px;
   padding: 15px;
+  background-color: $bg-white;
   @include font-face(400, 18px, normal, $primary-grey);
+  transition: border 0.3s ease, background-color 0.3s ease;
+
+  &:focus {
+    border-color: $dodgerblue;
+    background-color: lighten($bg-white, 3%);
+  }
 }
 
 .status-actions {
@@ -16,11 +25,9 @@ textarea:focus {
   flex-wrap: wrap;
   width: 100%;
   background-color: $bg-white;
-  height: auto;
+  padding: 12px 21px 12px 21px;
   margin-top: -5px;
-  padding-left: 21px;
-  padding-right: 21px;
-  padding-top: 12px;
+  border-top: 1px solid $divider;
 
   span.interest {
     @include font-face(600, 13px, italic, $warm-grey);
@@ -31,6 +38,7 @@ textarea:focus {
   span.charactersLeft {
     align-self: center;
     padding-right: 5px;
+    @include font-face(400, 13px, normal, $secondary-grey);
   }
 
   #status-buttons {
@@ -41,8 +49,29 @@ textarea:focus {
   button.btn-hangout-status {
     align-self: center;
     margin-right: 0.5rem;
+    background-color: $dodgerblue;
+    color: $white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: darken($dodgerblue, 8%);
+    }
   }
+
   button.btn-cb2 {
     margin-right: 3%;
+    background-color: $warm-grey;
+    color: $white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+
+    &:hover {
+      background-color: darken($warm-grey, 8%);
+    }
   }
 }

@@ -1,39 +1,61 @@
 #sponsor,
 #sponsor-us-now {
   background-color: $dodgerblue;
-  padding-bottom: 50px;
+  padding: 50px 20px 50px 20px; // added horizontal padding for spacing
 
   h2,
   p {
     color: $white;
     padding-top: 25px;
+    text-align: center;
+  }
+
+  h2 {
+    @include font-face(700, 28px, normal, $white);
+    margin-bottom: 10px;
   }
 
   p {
-    @include font-face(200, 15px, normal, $bg-white);
+    @include font-face(200, 15px, normal, $white);
     line-height: 1.9;
     margin-top: 10px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   a {
     text-decoration: underline;
     color: $white;
+
+    &:hover {
+      color: lighten($white, 10%);
+      text-decoration: none;
+    }
   }
 }
 
 #statistics {
   background-color: $bg-white;
-  padding-top: 50px;
-  padding-bottom: 50px;
+  padding: 50px 20px;
 
   p {
     @include font-face(200, 15px, normal, $secondary-grey);
     line-height: 1.9;
     margin-top: 10px;
+    text-align: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   a {
     text-decoration: underline;
     color: $secondary-grey;
+
+    &:hover {
+      color: darken($secondary-grey, 10%);
+      text-decoration: none;
+    }
   }
 }

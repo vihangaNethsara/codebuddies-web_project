@@ -1,0 +1,389 @@
+.user-profile-page {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px 0;
+
+  .profile-hero {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    overflow: hidden;
+    position: relative;
+
+    .profile-cover {
+      height: 200px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      position: relative;
+    }
+
+    .profile-main-info {
+      padding: 0 30px 30px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      gap: 20px;
+      margin-top: -60px;
+
+      .avatar-container {
+        flex-shrink: 0;
+        z-index: 2;
+      }
+
+      .profile-avatar-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 5px solid white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        object-fit: cover;
+      }
+
+      .default-avatar-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 5px solid white;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: #6c757d;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      }
+
+      .profile-text {
+        flex: 1;
+        margin-top: 40px;
+
+        .profile-name {
+          font-size: 2.5rem;
+          font-weight: 700;
+          margin: 0;
+          color: #2c3e50;
+        }
+
+        .profile-username {
+          font-size: 1.2rem;
+          color: #6c757d;
+          margin: 5px 0;
+        }
+
+        .member-since {
+          color: #6c757d;
+          margin: 10px 0;
+          
+          i {
+            margin-right: 8px;
+          }
+        }
+      }
+
+      .profile-actions {
+        margin-top: 40px;
+        display: flex;
+        gap: 15px;
+
+        .btn {
+          border-radius: 25px;
+          padding: 12px 25px;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.3s ease;
+
+          &.btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            }
+          }
+
+          &.btn-outline-secondary {
+            border: 2px solid #6c757d;
+            color: #6c757d;
+            background: white;
+            
+            &:hover {
+              background: #6c757d;
+              color: white;
+              transform: translateY(-2px);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .profile-cards {
+    margin-bottom: 30px;
+  }
+
+  .info-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-header {
+      background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+      padding: 20px 25px;
+      border-bottom: 1px solid #dee2e6;
+
+      h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #495057;
+
+        i {
+          margin-right: 10px;
+          color: #667eea;
+        }
+      }
+    }
+
+    .card-body {
+      padding: 25px;
+
+      .info-item {
+        margin-bottom: 20px;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        label {
+          font-weight: 600;
+          color: #495057;
+          display: block;
+          margin-bottom: 5px;
+        }
+
+        span {
+          color: #6c757d;
+          font-size: 1.1rem;
+        }
+
+        .bio-text {
+          color: #495057;
+          line-height: 1.6;
+          margin: 0;
+        }
+
+        &.empty {
+          text-align: center;
+          padding: 20px;
+          
+          .text-muted {
+            margin: 0;
+            font-style: italic;
+          }
+        }
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+
+        .stat-item {
+          text-align: center;
+          padding: 15px;
+          background: #f8f9fa;
+          border-radius: 10px;
+
+          .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+          }
+
+          .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+          }
+        }
+      }
+    }
+  }
+
+  .quick-actions-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    padding: 30px;
+
+    h3 {
+      margin-bottom: 25px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #495057;
+
+      i {
+        margin-right: 10px;
+        color: #667eea;
+      }
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 25px 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+
+      &:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        text-decoration: none;
+      }
+
+      i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #667eea;
+      }
+
+      &:hover i {
+        color: white;
+      }
+
+      span {
+        font-weight: 600;
+        color: #495057;
+      }
+
+      &:hover span {
+        color: white;
+      }
+    }
+  }
+
+  .not-logged-in-hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+
+    .welcome-card {
+      background: white;
+      border-radius: 20px;
+      padding: 60px 40px;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      max-width: 500px;
+
+      .welcome-icon {
+        font-size: 5rem;
+        color: #667eea;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 20px;
+      }
+
+      p {
+        font-size: 1.2rem;
+        color: #6c757d;
+        margin-bottom: 40px;
+        line-height: 1.6;
+      }
+
+      .auth-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+
+        .btn {
+          border-radius: 25px;
+          padding: 15px 30px;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.3s ease;
+
+          &.btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            }
+          }
+
+          &.btn-outline-primary {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: white;
+            
+            &:hover {
+              background: #667eea;
+              color: white;
+              transform: translateY(-2px);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .user-profile-page {
+    .profile-hero .profile-main-info {
+      flex-direction: column;
+      text-align: center;
+      padding: 0 20px 30px;
+      
+      .profile-actions {
+        justify-content: center;
+      }
+    }
+
+    .info-card .card-body .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-actions-card .action-buttons {
+      grid-template-columns: 1fr;
+    }
+
+    .not-logged-in-hero .welcome-card {
+      margin: 20px;
+      padding: 40px 30px;
+      
+      .auth-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  }
+}
