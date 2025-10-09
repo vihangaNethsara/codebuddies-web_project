@@ -4,6 +4,10 @@ import { sendWelcomeMessage } from "/imports/libs/server/user/welcome_email";
 import SlackAPI from "./slack/slack-api";
 import { ServiceConfiguration } from "meteor/service-configuration";
 
+// Premium Group Page - Backend
+import "./study_groups/premium_methods.js";
+import "./study_groups/premium_publications.js";
+
 Meteor.startup(function() {
   // migration
   Migrations.migrateTo("latest");

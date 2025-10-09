@@ -159,10 +159,10 @@ Meteor.methods({
   },
 
   /**
-   * Add bookmark with notification
+   * Toggle bookmark (add or remove)
    * @param {String} groupId - Study group ID
    */
-  "groups.addBookmarkWithNotification"(groupId) {
+  "groups.toggleBookmark"(groupId) {
     check(groupId, String);
 
     if (!this.userId) {
@@ -182,7 +182,9 @@ Meteor.methods({
     });
 
     if (existingBookmark) {
-      throw new Meteor.Error("already-bookmarked", "Group already bookmarked");
+      // Remove bookmark
+      StudyGroupBookmarks.remove(existingBookmark._id);
+      return { bookmarked: false, message: "Bookmark removed" };
     }
 
     // Add bookmark
@@ -193,10 +195,11 @@ Meteor.methods({
     });
 
     // Create notification for group organizers
-    const organizers = StudyGroupMembers.find({
-      studyGroupId: groupId,
-      role: { $in: ["owner", "admin"] }
-    }).fetch();
+    if (!group || !group.members) {
+      return { bookmarked: true, message: "Bookmark added" };
+    }
+
+    const organizers = group.members.filter(m => ["owner", "admin"].includes(m.role));
 
     const user = Meteor.users.findOne(this.userId);
     const username = user ? user.username : "Someone";
@@ -204,7 +207,7 @@ Meteor.methods({
     organizers.forEach(organizer => {
       if (typeof Notifications !== "undefined") {
         Notifications.insert({
-          userId: organizer.userId,
+          userId: organizer.id,
           type: "group_bookmark",
           message: `${username} bookmarked ${group.title}`,
           groupId: groupId,
@@ -215,11 +218,51 @@ Meteor.methods({
     });
 
     // Log activity
+    this.unblock();
     Meteor.call("groups.logActivity", groupId, "bookmark", {
       username: username
     });
 
-    return true;
+    return { bookmarked: true, message: "Bookmark added" };
+  },
+
+  /**
+   * Share group - Log sharing activity
+   * @param {String} groupId - Study group ID
+   * @param {String} platform - Sharing platform (twitter, facebook, linkedin, email, link)
+   */
+  "groups.shareGroup"(groupId, platform = "link") {
+    check(groupId, String);
+    check(platform, String);
+
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized", "You must be logged in");
+    }
+
+    // Verify group exists
+    const group = StudyGroups.findOne(groupId);
+    if (!group) {
+      throw new Meteor.Error("not-found", "Study group not found");
+    }
+
+    const user = Meteor.users.findOne(this.userId);
+    const username = user ? user.username : "Someone";
+
+    // Log activity
+    this.unblock();
+    Meteor.call("groups.logActivity", groupId, "share", {
+      username: username,
+      platform: platform
+    });
+
+    // Generate share URL
+    const groupUrl = Meteor.absoluteUrl(`study-groups/${group.slug || groupId}`);
+
+    return {
+      success: true,
+      url: groupUrl,
+      message: `Shared on ${platform}`
+    };
   },
 
   /**
@@ -246,13 +289,18 @@ Meteor.methods({
   },
 
   /**
-   * Check if group is bookmarked
+   * Check if group is bookmarked by current user
    * @param {String} groupId - Study group ID
    */
   "groups.isBookmarked"(groupId) {
     check(groupId, String);
 
     if (!this.userId) {
+      return false;
+    }
+
+    // Check if StudyGroupBookmarks collection exists
+    if (typeof StudyGroupBookmarks === "undefined") {
       return false;
     }
 
@@ -278,29 +326,25 @@ Meteor.methods({
     }
 
     // Verify user is organizer
-    const member = StudyGroupMembers.findOne({
-      studyGroupId: groupId,
-      userId: this.userId
-    });
-
-    if (!member || !["owner", "admin"].includes(member.role)) {
-      throw new Meteor.Error("not-authorized", "Only organizers can invite members");
-    }
-
-    // Get group details
     const group = StudyGroups.findOne(groupId);
     if (!group) {
       throw new Meteor.Error("not-found", "Study group not found");
+    }
+
+    const member = group.members ? group.members.find(m => m.id === this.userId) : null;
+
+    if (!member || !["owner", "admin"].includes(member.role)) {
+      throw new Meteor.Error("not-authorized", "Only organizers can invite members");
     }
 
     const user = Meteor.users.findOne(this.userId);
     const inviterName = user ? user.username : "Someone";
 
     // Generate invite link
-    const inviteLink = Meteor.absoluteUrl(`study-groups/${groupId}`);
+    const inviteLink = Meteor.absoluteUrl(`study-groups/${group.slug || groupId}`);
 
     // Send emails
-    const successCount = 0;
+    let successCount = 0;
     emails.forEach(email => {
       try {
         Email.send({
@@ -324,6 +368,7 @@ Meteor.methods({
     });
 
     // Log activity
+    this.unblock();
     Meteor.call("groups.logActivity", groupId, "invite", {
       inviterName: inviterName,
       emailCount: emails.length
@@ -377,107 +422,29 @@ Meteor.methods({
 });
 
 // ============================================
-// PUBLICATIONS
+// CLEANUP TASKS
 // ============================================
 
+/**
+ * Clean up old presence records
+ * Run this periodically (e.g., every 5 minutes)
+ */
 if (Meteor.isServer) {
-  /**
-   * Publish group presence data
-   */
-  Meteor.publish("groupPresence", function(groupId) {
-    check(groupId, String);
+  Meteor.setInterval(() => {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
 
-    if (!this.userId) {
-      return this.ready();
-    }
-
-    // Only show presence from last 2 minutes
-    const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
-
-    return AppStats.find(
+    // Mark users as offline if they haven't pinged in 5 minutes
+    AppStats.update(
       {
-        studyGroupId: groupId,
         isOnline: true,
-        lastSeen: { $gte: twoMinutesAgo }
+        lastSeen: { $lt: fiveMinutesAgo }
       },
       {
-        fields: {
-          userId: 1,
-          studyGroupId: 1,
-          isOnline: 1,
-          status: 1,
-          lastSeen: 1
-        }
-      }
+        $set: { isOnline: false }
+      },
+      { multi: true }
     );
-  });
-
-  /**
-   * Publish group activity feed
-   */
-  Meteor.publish("groupActivity", function(groupId, limit = 20) {
-    check(groupId, String);
-    check(limit, Number);
-
-    if (typeof GroupActivities === "undefined") {
-      return this.ready();
-    }
-
-    return GroupActivities.find(
-      { studyGroupId: groupId },
-      {
-        sort: { timestamp: -1 },
-        limit: Math.min(limit, 100) // Cap at 100
-      }
-    );
-  });
-
-  /**
-   * Publish group statistics
-   */
-  Meteor.publish("groupStats", function(groupId) {
-    check(groupId, String);
-
-    if (!this.userId) {
-      return this.ready();
-    }
-
-    // Return aggregated stats
-    // This is a simplified version - you may want to use aggregation pipeline
-    return StudyGroups.find(groupId, {
-      fields: {
-        _id: 1,
-        title: 1,
-        memberCount: 1,
-        hangoutCount: 1,
-        resourceCount: 1,
-        activityCount: 1,
-        lastActivityAt: 1
-      }
-    });
-  });
-
-  /**
-   * Clean up old presence records
-   * Run this periodically (e.g., every 5 minutes)
-   */
-  if (Meteor.isServer) {
-    Meteor.setInterval(() => {
-      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-
-      // Mark users as offline if they haven't pinged in 5 minutes
-      AppStats.update(
-        {
-          isOnline: true,
-          lastSeen: { $lt: fiveMinutesAgo }
-        },
-        {
-          $set: { isOnline: false }
-        },
-        { multi: true }
-      );
-    }, 5 * 60 * 1000); // Every 5 minutes
-  }
+  }, 5 * 60 * 1000); // Every 5 minutes
 }
 
 // ============================================

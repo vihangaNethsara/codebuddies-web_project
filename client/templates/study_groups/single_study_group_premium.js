@@ -13,6 +13,7 @@ import { Meteor } from "meteor/meteor";
 import { $ } from "meteor/jquery";
 
 import "./single_study_group_premium.html";
+import "./_modals/share_group_modal.html";
 
 // ============================================
 // TEMPLATE LIFECYCLE
@@ -427,8 +428,17 @@ Template.single_study_group_premium.events({
           }
         });
     } else {
-      // Fallback to clipboard
-      copyToClipboard(shareData.url, instance);
+      // Fallback — open our modal
+      // Render modal template into body
+      const modalHtml = Blaze.toHTMLWithData(Template.share_group_modal, {});
+      // Ensure no duplicates
+      document.querySelectorAll(".modal-backdrop").forEach(n => n.remove());
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = modalHtml;
+      document.body.appendChild(wrapper.firstElementChild);
+      // Populate input value
+      const input = document.querySelector(".share-modal .input-link");
+      if (input) input.value = shareData.url;
     }
   },
 
