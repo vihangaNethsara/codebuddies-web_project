@@ -1,0 +1,55 @@
+/* Success Alert Styles - Left Corner */
+.til-success-alert {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 9999;
+  background-color: #28a745;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  max-width: 350px;
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: all 0.3s ease-in-out;
+}
+
+.til-success-alert.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.til-success-alert .alert-icon {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.til-success-alert .alert-text {
+  display: inline-block;
+  line-height: 1.4;
+}
+
+.til-success-alert.error {
+  background-color: #dc3545;
+}
+
+.til-success-alert.warning {
+  background-color: #ffc107;
+  color: #000;
+}
+
+/* Dark theme support */
+.dark-theme .til-success-alert {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+/* Animation for fade out */
+.til-success-alert.fade-out {
+  opacity: 0;
+  transform: translateX(-100%);
+}

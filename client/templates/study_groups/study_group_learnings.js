@@ -1,5 +1,4 @@
-Template.studyGroupLearnings.onCreated(function () {
-
+Template.studyGroupLearnings.onCreated(function() {
   // 1. Initialization
 
   var instance = this;
@@ -8,16 +7,22 @@ Template.studyGroupLearnings.onCreated(function () {
   instance.loaded = new ReactiveVar(0);
   instance.limit = new ReactiveVar(5);
 
-   instance.autorun(function () {
-
+  instance.autorun(function() {
     // get the limit
     var limit = instance.limit.get();
 
     //console.log("Asking for "+limit+" learnings...")
-    var studyGroupId = FlowRouter.getParam('studyGroupId');
+    var studyGroupId = FlowRouter.getParam("studyGroupId");
     //console.log(studyGroupId)
+
+    // Only subscribe if we have a valid studyGroupId
+    if (!studyGroupId) {
+      //console.log("No studyGroupId found, skipping learnings subscription");
+      return;
+    }
+
     // subscribe to the learningsByHangoutId publication
-    var subscription = instance.subscribe('learningsByStudyGroupId', limit, studyGroupId);
+    var subscription = instance.subscribe("learningsByStudyGroupId", limit, studyGroupId);
     // if subscription is ready, set limit to newLimit
     if (subscription.ready()) {
       //console.log("> Received "+limit+" learnings. \n\n")
@@ -27,25 +32,28 @@ Template.studyGroupLearnings.onCreated(function () {
     }
   });
 
-   instance.learningsForStudyGroup = function() {
-    return Learnings.find({}, {limit: instance.loaded.get(), sort: {created_at: -1}});
-  }
-
+  instance.learningsForStudyGroup = function() {
+    return Learnings.find({}, { limit: instance.loaded.get(), sort: { created_at: -1 } });
+  };
 });
 
 Template.studyGroupLearnings.helpers({
-    // the posts cursor
-  learnings: function () {
+  // the posts cursor
+  learnings: function() {
     return Template.instance().learningsForStudyGroup();
   },
   // are there more posts to show?
-  hasMoreLearnings: function () {
-    return Template.instance().learningsForStudyGroup().count() >= Template.instance().limit.get();
+  hasMoreLearnings: function() {
+    return (
+      Template.instance()
+        .learningsForStudyGroup()
+        .count() >= Template.instance().limit.get()
+    );
   }
 });
 
 Template.studyGroupLearnings.events({
- 'click #load-more-learnings': function (event, instance) {
+  "click #load-more-learnings": function(event, instance) {
     event.preventDefault();
 
     // get current value for limit, i.e. how many learnings are currently displayed

@@ -1,5 +1,4 @@
-Template.profileLearnings.onCreated(function () {
-
+Template.profileLearnings.onCreated(function() {
   // 1. Initialization
 
   var instance = this;
@@ -9,46 +8,55 @@ Template.profileLearnings.onCreated(function () {
   instance.limit = new ReactiveVar(5);
 
   // ...
-   instance.autorun(function () {
-
+  instance.autorun(function() {
     // get the limit
     var limit = instance.limit.get();
 
-    console.log("Asking for "+limit+" learnings...")
-    var userId = FlowRouter.getParam('userId');
-    console.log(userId)
+    console.log("Asking for " + limit + " learnings...");
+    var userId = FlowRouter.getParam("userId");
+    console.log(userId);
+
+    // Only subscribe if we have a valid userId
+    if (!userId) {
+      console.log("No userId found, skipping learnings subscription");
+      return;
+    }
+
     // subscribe to the learningsByUserId publication
-    var subscription = instance.subscribe('learningsByUserId', limit, userId);
+    var subscription = instance.subscribe("learningsByUserId", limit, userId);
     console.log(subscription);
 
     // if subscription is ready, set limit to newLimit
     if (subscription.ready()) {
-      console.log("> Received "+limit+" learnings. \n\n")
+      console.log("> Received " + limit + " learnings. \n\n");
       instance.loaded.set(limit);
     } else {
       console.log("> Subscription is not ready yet. \n\n");
     }
   });
 
-   instance.learningsForUser = function() {
-    return Learnings.find({}, {limit: instance.loaded.get(), sort: {created_at: -1}});
-  }
-
+  instance.learningsForUser = function() {
+    return Learnings.find({}, { limit: instance.loaded.get(), sort: { created_at: -1 } });
+  };
 });
 
 Template.profileLearnings.helpers({
-    // the posts cursor
-  learnings: function () {
+  // the posts cursor
+  learnings: function() {
     return Template.instance().learningsForUser();
   },
   // are there more posts to show?
-  hasMoreLearnings: function () {
-    return Template.instance().learningsForUser().count() >= Template.instance().limit.get();
+  hasMoreLearnings: function() {
+    return (
+      Template.instance()
+        .learningsForUser()
+        .count() >= Template.instance().limit.get()
+    );
   }
 });
 
 Template.profileLearnings.events({
- 'click #load-more-learnings': function (event, instance) {
+  "click #load-more-learnings": function(event, instance) {
     event.preventDefault();
 
     // get current value for limit, i.e. how many learnings are currently displayed

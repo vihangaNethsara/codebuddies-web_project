@@ -1,15 +1,37 @@
 Template.profile.onCreated(function() {
   var username = FlowRouter.getParam("name");
+  var userId = FlowRouter.getParam("userId");
   var title = username + " | Profile";
   DocHead.setTitle(title);
-  let myData = Meteor.users.find({}).fetch();
+
+  // Subscribe to user data to ensure getUserDetails method has access to the user
+  this.autorun(() => {
+    this.subscribe("userStatus");
+    this.subscribe("userProfile", userId);
+    // Also subscribe to current user data if logged in
+    if (Meteor.userId()) {
+      this.subscribe("currentUserData");
+    }
+  });
 });
 
 Template.profile.helpers({
   userInfo: function() {
     var userId = FlowRouter.getParam("userId");
-    console.log(ReactiveMethod.call("getUserDetails", userId));
-    return ReactiveMethod.call("getUserDetails", userId);
+    console.log("Getting user details for userId:", userId);
+
+    // Try ReactiveMethod first
+    var reactiveResult = ReactiveMethod.call("getUserDetails", userId);
+    console.log("ReactiveMethod result:", reactiveResult);
+
+    // Fallback to direct subscription data if ReactiveMethod doesn't work
+    if (!reactiveResult) {
+      var directResult = Meteor.users.findOne(userId);
+      console.log("Direct subscription result:", directResult);
+      return directResult;
+    }
+
+    return reactiveResult;
   },
   hangoutsJoinedCount: function() {
     var userId = FlowRouter.getParam("userId");
