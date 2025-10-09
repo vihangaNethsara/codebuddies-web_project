@@ -15,15 +15,25 @@ Meteor.methods({
         end: Match.OneOf(String, Date),
         duration: Number,
         type: String,
-        groupId: String
+        groupId: String,
+        sessionToken: Match.Maybe(String) // Allow sessionToken for custom auth
       })
     );
 
-    if (!this.userId) {
+    // Support both Meteor auth and custom auth
+    const userId = this.userId || (data.sessionToken && verifySessionToken(data.sessionToken));
+
+    if (!userId) {
       throw new Meteor.Error("Hangout.methods.createHangout.not-logged-in", "Must be logged in to create new hangout.");
     }
 
-    const loggedInUser = Meteor.user();
+    // Get user from either system
+    const loggedInUser = Meteor.users.findOne(userId) || CustomUsers.findOne(userId);
+
+    if (!loggedInUser) {
+      throw new Meteor.Error("Hangout.methods.createHangout.user-not-found", "User not found.");
+    }
+
     Helpers.createHangout(data, loggedInUser);
 
     return true;

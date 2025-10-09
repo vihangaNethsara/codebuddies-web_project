@@ -27,6 +27,19 @@ UserManager = {
           Session.set("userSessionToken", result.sessionToken);
           Session.set("currentUser", result.user); // includes roles
           localStorage.setItem("codebuddies_session", result.sessionToken);
+
+          // CRITICAL: Also login to Meteor's auth system using the resume token
+          // This makes Meteor.userId() and Meteor.user() work
+          if (result.loginToken) {
+            Meteor.loginWithToken(result.loginToken, function(meteorError) {
+              if (meteorError) {
+                console.error("Meteor login failed:", meteorError);
+              } else {
+                console.log("Successfully synced with Meteor auth");
+              }
+            });
+          }
+
           callback(null, result.user);
         }
       }
@@ -40,10 +53,20 @@ UserManager = {
         Session.set("userSessionToken", null);
         Session.set("currentUser", null);
         localStorage.removeItem("codebuddies_session");
+
+        // Also logout from Meteor's auth system
+        Meteor.logout(function(meteorError) {
+          if (meteorError) {
+            console.error("Meteor logout failed:", meteorError);
+          }
+        });
+
         if (callback) callback(error);
       });
-    } else if (callback) {
-      callback();
+    } else {
+      // Just logout from Meteor if no custom session
+      Meteor.logout();
+      if (callback) callback();
     }
   },
 

@@ -1,10 +1,12 @@
 // Publish problem reports for admins/moderators
 Meteor.publish("problemReports", function() {
-  if (!this.userId) {
+  const userId = getPublicationUserId.call(this);
+
+  if (!userId) {
     return this.ready();
   }
 
-  if (Roles.userIsInRole(this.userId, ["admin", "moderator"], "CB")) {
+  if (publicationUserHasRole.call(this, ["admin", "moderator"], "CB")) {
     return ProblemReports.find(
       {},
       {
@@ -14,7 +16,7 @@ Meteor.publish("problemReports", function() {
   } else {
     // Regular users can only see their own reports
     return ProblemReports.find(
-      { userId: this.userId },
+      { userId: userId },
       {
         sort: { createdAt: -1 }
       }

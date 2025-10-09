@@ -1,9 +1,18 @@
 Meteor.publish("myStudyGroups", function(limit) {
-  if (!this.userId) {
+  const userId = getPublicationUserId.call(this);
+
+  if (!userId) {
     return this.ready();
   }
-  //console.log(this.userId);
-  let roles = Meteor.users.findOne({ _id: this.userId }).roles;
+
+  // Try to get user from either Meteor.users or CustomUsers
+  let user = Meteor.users.findOne({ _id: userId }) || CustomUsers.findOne({ _id: userId });
+
+  if (!user || !user.roles) {
+    return this.ready();
+  }
+
+  let roles = user.roles;
   let studyGroups = [];
   for (let key in roles) {
     if (roles[key].length !== 0) {

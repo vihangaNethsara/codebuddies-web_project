@@ -1,14 +1,17 @@
 import { Match } from "meteor/check";
 
 Meteor.publish("userStatus", function() {
-  if (this.userId) {
+  const userId = getPublicationUserId.call(this);
+
+  if (userId) {
     return Meteor.users.find({ "status.online": true });
   } else {
     this.ready();
   }
 });
+
 Meteor.publish("allUsers", function() {
-  if (Roles.userIsInRole(this.userId, ["admin", "moderator"], "CB")) {
+  if (publicationUserHasRole.call(this, ["admin", "moderator"], "CB")) {
     return Meteor.users.find(
       {},
       {
@@ -35,7 +38,9 @@ Meteor.publish("studyGroupMemberDetail", function(groupId, userId) {
     return this.ready();
   }
 
-  if (Roles.userIsInRole(this.userId, ["owner", "admin", "moderator"], groupId)) {
+  const currentUserId = getPublicationUserId.call(this);
+
+  if (currentUserId && Roles.userIsInRole(currentUserId, ["owner", "admin", "moderator"], groupId)) {
     return Meteor.users.find(
       { _id: userId },
       {
@@ -77,9 +82,11 @@ Meteor.publish("userProfile", function(userId) {
 });
 
 Meteor.publish(null, function() {
-  if (this.userId) {
+  const userId = getPublicationUserId.call(this);
+
+  if (userId) {
     return Meteor.users.find(
-      { _id: this.userId },
+      { _id: userId },
       {
         fields: {
           createdAt: 1,

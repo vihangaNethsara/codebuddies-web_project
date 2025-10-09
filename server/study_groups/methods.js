@@ -13,10 +13,14 @@ Meteor.methods({
       title: String,
       tagline: String,
       slug: String,
-      tags: Match.Maybe([String])
+      tags: Match.Maybe([String]),
+      sessionToken: Match.Maybe(String) // Allow sessionToken for custom auth
     });
 
-    if (!this.userId) {
+    // Support both Meteor auth and custom auth
+    const userId = this.userId || (data.sessionToken && verifySessionToken(data.sessionToken));
+
+    if (!userId) {
       throw new Meteor.Error(
         "StudyGroups.methods.createNewStudyGroup.not-logged-in",
         "Must be logged in to create new Study Group."
@@ -36,7 +40,12 @@ Meteor.methods({
       );
     }
 
-    const user = Meteor.user();
+    // Get user from either system
+    const user = Meteor.users.findOne(userId) || CustomUsers.findOne(userId);
+
+    if (!user) {
+      throw new Meteor.Error("StudyGroups.methods.createNewStudyGroup.user-not-found", "User not found.");
+    }
 
     const studyGroup = {
       title: data.title,

@@ -3,7 +3,9 @@ import { Match } from "meteor/check";
 Meteor.publish("hangouts", function(limit) {
   check(limit, Number);
 
-  if (Roles.userIsInRole(this.userId, ["admin", "moderator"], "CB")) {
+  const userId = getPublicationUserId.call(this);
+
+  if (publicationUserHasRole.call(this, ["admin", "moderator"], "CB")) {
     return Hangouts.find({}, { fields: { email_addresses: 0 }, sort: { start: -1 }, limit: limit });
   } else {
     return Hangouts.find(
@@ -16,7 +18,7 @@ Meteor.publish("hangouts", function(limit) {
 });
 
 Meteor.publish("hangoutById", function(hangoutId) {
-  if (Roles.userIsInRole(this.userId, ["admin", "moderator"], "CB")) {
+  if (publicationUserHasRole.call(this, ["admin", "moderator"], "CB")) {
     return Hangouts.find({ _id: hangoutId }, { fields: { email_addresses: 0 } });
   } else {
     return Hangouts.find({ _id: hangoutId, visibility: { $ne: false } }, { fields: { email_addresses: 0 } });
@@ -27,7 +29,9 @@ Meteor.publish("hangoutsJoined", function(limit, userId) {
   check(limit, Number);
   check(userId, Match.Maybe(String));
 
-  if (this.userId && userId) {
+  const currentUserId = getPublicationUserId.call(this);
+
+  if (currentUserId && userId) {
     return Hangouts.find(
       { users: { $elemMatch: { $eq: userId } }, visibility: { $ne: false } },
       { sort: { timestamp: -1 }, limit: limit }

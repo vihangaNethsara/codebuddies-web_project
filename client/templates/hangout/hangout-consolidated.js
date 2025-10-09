@@ -250,7 +250,9 @@ Template.createHangoutModal.events({
       groupId: groupId,
       externalCheckbox: externalCheckbox,
       externalButtonText: externalButtonText,
-      externalURL: externalURL
+      externalURL: externalURL,
+      // Include session token for custom auth support
+      sessionToken: Session.get("userSessionToken")
     };
 
     if ($.trim(start) == "") {
@@ -469,7 +471,9 @@ Template.cloneHangoutModal.events({
       groupId: groupId,
       externalCheckbox: externalCheckbox,
       externalButtonText: externalButtonText,
-      externalURL: externalURL
+      externalURL: externalURL,
+      // Include session token for custom auth support
+      sessionToken: Session.get("userSessionToken")
     };
 
     if ($.trim(start) == "") {
