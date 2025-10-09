@@ -85,6 +85,11 @@ Template.hangoutCards.onCreated(function() {
   instance.flag = new ReactiveVar(false);
 
   instance.autorun(function() {
+    // CRITICAL FIX: Skip while logging in to prevent reactive loops
+    if (Meteor.loggingIn()) {
+      return;
+    }
+
     var limit = instance.limit.get();
     instance.subscribe("hangouts", limit);
   });
@@ -136,7 +141,23 @@ Template.hangoutCards.events({
 
 // Create Hangout Modal
 Template.createHangoutModal.onCreated(function() {
-  this.subscribe("myStudyGroups");
+  const instance = this;
+
+  // Make subscription reactive to auth state
+  // This ensures subscription waits for auth to complete
+  instance.autorun(function() {
+    // CRITICAL FIX: Skip while logging in to prevent reactive loops
+    if (Meteor.loggingIn()) {
+      return;
+    }
+
+    // Check if user is authenticated (from either system)
+    const userId = Meteor.userId() || (UserManager && UserManager.getUserId());
+
+    if (userId) {
+      instance.subscribe("myStudyGroups");
+    }
+  });
 });
 
 Template.createHangoutModal.onRendered(function() {
@@ -186,7 +207,19 @@ Template.createHangoutModal.onRendered(function() {
   const instance = this;
   instance.studyGroupId = FlowRouter.getParam("studyGroupId");
   instance.autorun(() => {
-    let roles = Meteor.user().roles;
+    // CRITICAL FIX: Skip while logging in to prevent reactive loops
+    if (Meteor.loggingIn()) {
+      return;
+    }
+
+    // Get user from either auth system
+    const user = Meteor.user() || (UserManager && UserManager.currentUser());
+
+    if (!user || !user.roles) {
+      return; // Exit if no user or roles
+    }
+
+    let roles = user.roles;
     let studyGroupsKeys = [];
     Object.entries(roles).forEach(([key, value]) => {
       if (value.includes("owner") || value.includes("admin") || (value.includes("moderator") && key !== "CB")) {
@@ -375,7 +408,21 @@ Template.editHangoutModal.events({
 
 // Clone Hangout Modal
 Template.cloneHangoutModal.onCreated(function() {
-  this.subscribe("myStudyGroups");
+  const instance = this;
+
+  // Make subscription reactive to auth state
+  instance.autorun(function() {
+    // CRITICAL FIX: Skip while logging in to prevent reactive loops
+    if (Meteor.loggingIn()) {
+      return;
+    }
+
+    const userId = Meteor.userId() || (UserManager && UserManager.getUserId());
+
+    if (userId) {
+      instance.subscribe("myStudyGroups");
+    }
+  });
 });
 
 Template.cloneHangoutModal.onRendered(function() {
@@ -406,7 +453,19 @@ Template.cloneHangoutModal.onRendered(function() {
 
   const instance = this;
   instance.autorun(() => {
-    let roles = Meteor.user().roles;
+    // CRITICAL FIX: Skip while logging in to prevent reactive loops
+    if (Meteor.loggingIn()) {
+      return;
+    }
+
+    // Get user from either auth system
+    const user = Meteor.user() || (UserManager && UserManager.currentUser());
+
+    if (!user || !user.roles) {
+      return; // Exit if no user or roles
+    }
+
+    let roles = user.roles;
     let studyGroupsKeys = [];
     Object.entries(roles).forEach(([key, value]) => {
       if (value.includes("owner") || value.includes("admin") || (value.includes("moderator") && key !== "CB")) {
@@ -725,6 +784,11 @@ Template.hangoutFrame.onCreated(function() {
   let instance = this;
   instance.room = new ReactiveVar(`cb${instance.data._id || instance.data.hroom}`);
   instance.autorun(() => {
+    // CRITICAL FIX: Skip while logging in to prevent reactive loops
+    if (Meteor.loggingIn()) {
+      return;
+    }
+
     instance.subscribe("hangoutParticipants", instance.room.get());
   });
 
@@ -781,11 +845,14 @@ Template.hangoutFrame.onRendered(function() {
 
 Template.hangoutFrame.events({
   "click .load-hangout": function(event, template) {
+    // Get user from either auth system
+    const user = Meteor.user() || (UserManager && UserManager.currentUser());
+
     const data = {
       room: this._id || template.data.hroom,
-      username: (Meteor.user() && Meteor.user().username) || template.data.huser,
+      username: (user && user.username) || template.data.huser,
       type: template.data.htype || this.type,
-      avatar: template.data.havatar || Meteor.user().profile.avatar.default
+      avatar: template.data.havatar || (user && user.profile && user.profile.avatar && user.profile.avatar.default)
     };
     return template.loadJitsi(data);
   },
@@ -944,6 +1011,11 @@ Template.hangoutLearnings.onCreated(function() {
   instance.limit = new ReactiveVar(5);
 
   instance.autorun(function() {
+    // CRITICAL FIX: Skip while logging in to prevent reactive loops
+    if (Meteor.loggingIn()) {
+      return;
+    }
+
     var limit = instance.limit.get();
     console.log("Asking for " + limit + " learnings...");
     var hangoutId = FlowRouter.getParam("hangoutId");
@@ -1078,8 +1150,9 @@ function submitLearningEntry() {
     return;
   }
 
-  // Check if user is logged in
-  if (!Meteor.userId()) {
+  // Check if user is logged in (both auth systems)
+  const userId = Meteor.userId() || (UserManager && UserManager.getUserId());
+  if (!userId) {
     swal({
       title: "Please log in",
       text: "You need to be logged in to save your learning",
@@ -1089,8 +1162,11 @@ function submitLearningEntry() {
     return;
   }
 
+  // Get user from either auth system
+  const user = Meteor.user() || (UserManager && UserManager.currentUser());
+
   // Check if user object exists
-  if (!Meteor.user() || !Meteor.user().username) {
+  if (!user || !user.username) {
     swal({
       title: "User Error",
       text: "User information not available. Please refresh and try again.",
@@ -1107,14 +1183,14 @@ function submitLearningEntry() {
   let optInTweet = $("#chkOptInTweet").is(":checked");
 
   console.log("Saving learning:", learningStatus);
-  console.log("User ID:", Meteor.userId());
-  console.log("Username:", Meteor.user().username);
+  console.log("User ID:", userId);
+  console.log("Username:", user.username);
 
   // Save to both collections for comprehensive tracking
   // 1. Save to existing Learnings collection (for hangout-specific tracking)
   var hangoutData = {
-    user_id: Meteor.userId(),
-    username: Meteor.user().username,
+    user_id: userId,
+    username: user.username,
     title: learningStatus,
     hangout_id: FlowRouter.getParam("hangoutId"),
     study_group_id: FlowRouter.getParam("studyGroupId"),
@@ -1123,8 +1199,8 @@ function submitLearningEntry() {
 
   // 2. Save to new TodayILearned collection (for profile display with date/time)
   var tilData = {
-    user_id: Meteor.userId(),
-    username: Meteor.user().username,
+    user_id: userId,
+    username: user.username,
     title: learningStatus,
     optInTweet
   };

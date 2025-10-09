@@ -34,13 +34,17 @@ UserManager = {
             Meteor.loginWithToken(result.loginToken, function(meteorError) {
               if (meteorError) {
                 console.error("Meteor login failed:", meteorError);
+                // Still call callback - custom auth works even if Meteor sync fails
+                callback(null, result.user);
               } else {
-                console.log("Successfully synced with Meteor auth");
+                console.log("Successfully synced with Meteor auth - userId:", Meteor.userId());
+                callback(null, result.user);
               }
             });
+          } else {
+            // No login token, just use custom auth
+            callback(null, result.user);
           }
-
-          callback(null, result.user);
         }
       }
     );
@@ -105,11 +109,37 @@ UserManager = {
 
   init: function() {
     const savedToken = localStorage.getItem("codebuddies_session");
+    console.log("UserManager.init() - savedToken:", savedToken ? "exists" : "null");
     if (savedToken) {
       Meteor.call("customUsers.getCurrentUser", savedToken, function(error, user) {
+        console.log("getCurrentUser callback - error:", error, "user:", user ? "exists" : "null");
         if (!error && user) {
           Session.set("userSessionToken", savedToken);
           Session.set("currentUser", user);
+          console.log("UserManager initialized with saved session", "User:", user.username);
+
+          // If Meteor.userId() is null, try to get a fresh login token
+          // This handles page reloads where Meteor session expired
+          if (!Meteor.userId()) {
+            console.log("Meteor session not found, requesting new login token...");
+            Meteor.call("customUsers.getLoginToken", savedToken, function(tokenError, loginToken) {
+              console.log("getLoginToken callback - error:", tokenError, "token:", loginToken ? "received" : "null");
+              if (!tokenError && loginToken) {
+                console.log("Calling Meteor.loginWithToken...");
+                Meteor.loginWithToken(loginToken, function(meteorError) {
+                  if (meteorError) {
+                    console.error("Failed to restore Meteor session:", meteorError);
+                  } else {
+                    console.log("Meteor session restored successfully! Meteor.userId():", Meteor.userId());
+                  }
+                });
+              } else {
+                console.error("Could not get login token:", tokenError);
+              }
+            });
+          } else {
+            console.log("Meteor session already exists, userId:", Meteor.userId());
+          }
         } else {
           localStorage.removeItem("codebuddies_session");
         }

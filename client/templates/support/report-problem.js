@@ -5,10 +5,22 @@ import "./report-problem.html";
 
 // Main template helpers and events
 Template.reportProblem.onCreated(function() {
-  this.showSuccess = new ReactiveVar(false);
+  const instance = this;
+  instance.showSuccess = new ReactiveVar(false);
 
-  // Subscribe to user's problem reports
-  this.subscribe("problemReports");
+  // Subscribe to user's problem reports - wait for auth to be ready
+  instance.autorun(function() {
+    // CRITICAL FIX: Skip while logging in to prevent reactive loops
+    if (Meteor.loggingIn()) {
+      return;
+    }
+
+    // Only subscribe if user is authenticated
+    const userId = Meteor.userId() || (UserManager && UserManager.getUserId());
+    if (userId) {
+      instance.subscribe("problemReports");
+    }
+  });
 });
 
 Template.reportProblem.helpers({
@@ -31,21 +43,42 @@ Template.reportProblemModal.onCreated(function() {
 
 Template.reportProblemModal.helpers({
   currentUser: function() {
-    return Meteor.user();
+    // CRITICAL FIX: Don't call reactive functions while logging in
+    if (Meteor.loggingIn()) {
+      return null;
+    }
+
+    // Use fallback pattern for dual auth system
+    return Meteor.user() || (typeof UserManager !== "undefined" && UserManager.currentUser()) || null;
   },
 
   getUserFullName: function() {
-    const user = Meteor.user();
+    // CRITICAL FIX: Don't call reactive functions while logging in
+    if (Meteor.loggingIn()) {
+      return "Loading...";
+    }
+
+    // Use fallback pattern for dual auth system
+    const user = Meteor.user() || (typeof UserManager !== "undefined" && UserManager.currentUser()) || null;
     if (user && user.profile) {
-      return user.profile.name || user.username || "Anonymous User";
+      return user.profile.name || user.profile.displayName || user.username || "Anonymous User";
     }
     return "Anonymous User";
   },
 
   getUserEmail: function() {
-    const user = Meteor.user();
+    // CRITICAL FIX: Don't call reactive functions while logging in
+    if (Meteor.loggingIn()) {
+      return "Loading...";
+    }
+
+    // Use fallback pattern for dual auth system
+    const user = Meteor.user() || (typeof UserManager !== "undefined" && UserManager.currentUser()) || null;
     if (user && user.emails && user.emails.length > 0) {
       return user.emails[0].address;
+    }
+    if (user && user.email) {
+      return user.email; // Custom auth user might have email directly
     }
     return "No email provided";
   },
@@ -93,21 +126,37 @@ Template.reportProblemModal.events({
   "submit .report-problem-form": function(event, template) {
     event.preventDefault();
 
+    template.isSubmitting.set(true);
+
     // This is what actually sends data to the database
     const formData = {
       problemType: event.target.problemType.value,
       problemDescription: event.target.problemDescription.value,
       systemInfo: event.target.systemInfo.value,
       priority: event.target.priority.value,
+      sessionToken: Session.get("userSessionToken"), // Support dual auth
       attachedFiles: template.uploadedFiles.get()
     };
 
     // Call the Meteor method to insert into database
     Meteor.call("problemReports.insert", formData, function(error, result) {
+      template.isSubmitting.set(false);
+
       if (error) {
-        sAlert.error("Failed to submit report");
+        sAlert.error("Failed to submit report: " + error.reason);
       } else {
         sAlert.success("Report submitted successfully!");
+        $("#reportProblemModal").modal("hide");
+
+        // Reset form
+        event.target.reset();
+        template.uploadedFiles.set([]);
+
+        // Show success message on main page
+        Template.instance().showSuccess.set(true);
+        setTimeout(function() {
+          Template.instance().showSuccess.set(false);
+        }, 5000);
       }
     });
   },

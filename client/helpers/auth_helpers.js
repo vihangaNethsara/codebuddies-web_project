@@ -30,6 +30,26 @@ Template.registerHelper("isLoggedIn", function() {
 });
 
 /**
+ * Check if authentication is in progress
+ * @returns {Boolean}
+ */
+Template.registerHelper("isAuthenticating", function() {
+  // Check if Meteor is logging in
+  if (Meteor.loggingIn()) {
+    return true;
+  }
+
+  // Check if we have session data but Meteor.userId() is not ready yet
+  const sessionToken = Session.get("userSessionToken");
+  const currentUser = Session.get("currentUser");
+  if (sessionToken && currentUser && !Meteor.userId()) {
+    return true; // Custom auth ready but Meteor auth syncing
+  }
+
+  return false;
+});
+
+/**
  * Get username - works with both auth systems
  * @returns {String|null}
  */

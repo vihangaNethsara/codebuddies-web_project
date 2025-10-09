@@ -376,7 +376,8 @@ Template.single_study_group_premium.events({
   "click .bookmark-btn"(event, instance) {
     event.preventDefault();
 
-    if (!Meteor.userId()) {
+    const userId = Meteor.userId() || (UserManager && UserManager.getUserId());
+    if (!userId) {
       showToast("Please sign in to bookmark groups", "warning");
       return;
     }
@@ -448,7 +449,8 @@ Template.single_study_group_premium.events({
   "click .join-group-btn, .join-btn"(event, instance) {
     event.preventDefault();
 
-    if (!Meteor.userId()) {
+    const userId = Meteor.userId() || (UserManager && UserManager.getUserId());
+    if (!userId) {
       showToast("Please sign in to join groups", "warning");
       FlowRouter.go("/sign-in");
       return;
@@ -742,7 +744,8 @@ function handleScrollToTopButton() {
  * Update user presence
  */
 function updatePresence(groupId) {
-  if (!Meteor.userId() || !groupId) return;
+  const userId = Meteor.userId() || (UserManager && UserManager.getUserId());
+  if (!userId || !groupId) return;
 
   Meteor.call("groups.updatePresence", groupId, true, error => {
     if (error) {
@@ -840,7 +843,8 @@ function closeToast(toast) {
  * Log activity
  */
 function logActivity(groupId, activityType, data) {
-  if (!Meteor.userId()) return;
+  const userId = Meteor.userId() || (UserManager && UserManager.getUserId());
+  if (!userId) return;
 
   Meteor.call("groups.logActivity", groupId, activityType, data, error => {
     if (error) {

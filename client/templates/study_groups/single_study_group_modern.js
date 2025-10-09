@@ -36,6 +36,11 @@ Template.singleStudyGroupModern.onCreated(function() {
 
   // Subscribe to data
   instance.autorun(() => {
+    // CRITICAL FIX: Skip while logging in to prevent reactive loops
+    if (Meteor.loggingIn()) {
+      return;
+    }
+
     instance.subscribe("studyGroupById", instance.studyGroupId);
     instance.subscribe("hangoutParticipants", instance.hangoutId);
   });
@@ -47,13 +52,21 @@ Template.singleStudyGroupModern.onCreated(function() {
   }
 
   // Check if group is bookmarked (if user is logged in)
-  if (Meteor.userId()) {
-    Meteor.call("isGroupBookmarked", instance.studyGroupId, (error, result) => {
-      if (!error && result) {
-        instance.isBookmarked.set(true);
-      }
-    });
-  }
+  // CRITICAL FIX: Use autorun with loggingIn check
+  instance.autorun(() => {
+    if (Meteor.loggingIn()) {
+      return;
+    }
+
+    const userId = Meteor.userId();
+    if (userId) {
+      Meteor.call("isGroupBookmarked", instance.studyGroupId, (error, result) => {
+        if (!error && result) {
+          instance.isBookmarked.set(true);
+        }
+      });
+    }
+  });
 });
 
 // ============================================

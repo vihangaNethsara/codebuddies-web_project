@@ -1,7 +1,19 @@
 Template.layout.events({
   "click .continue-popup": function(event, template) {
-    event.preventDefault();
-    if (!Meteor.userId()) {
+    // Check both auth systems - use fallback pattern
+    const userId = Meteor.userId() || (UserManager && UserManager.getUserId());
+    console.log(
+      "Continue-popup clicked. Meteor.userId():",
+      Meteor.userId(),
+      "UserManager.getUserId():",
+      UserManager && UserManager.getUserId(),
+      "Combined userId:",
+      userId
+    );
+
+    // Only prevent default and show popup if NOT authenticated
+    if (!userId) {
+      event.preventDefault();
       swal({
         title: TAPi18n.__("you_are_almost_there"),
         html: TAPi18n.__("signup_or_signin"),

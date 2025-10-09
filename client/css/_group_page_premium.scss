@@ -814,7 +814,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(11, 15, 23, 0.45);
-  z-index: 1200;
+  z-index: 1040; // Must be lower than modal z-index (1050)
   padding: var(--space-6);
 }
 
