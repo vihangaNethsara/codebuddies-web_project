@@ -122,7 +122,10 @@ a {
 .margin-none { margin: 0px; }
 .width-100 { width: 100%; }
 
-.bg-blue { background: #FF7F50; } // accent coral background
+.bg-blue { 
+  background: linear-gradient(135deg, #0f4c75 0%, #3282b8 100%); // blue gradient matching theme
+  color: #ffffff;
+} 
 
 .study-group-tag.label-default { position: absolute; z-index: 99999; }
 
@@ -142,9 +145,9 @@ a {
 .label-primary { margin-top: $margin-base; }
 
 /* Striped rows */
-.row-stripe:nth-child(odd) { background: #2D2D2D; }
+.row-stripe:nth-child(odd) { background: #16213e; } // darker navy
 
-.voted { color: #FF7F50; }
+.voted { color: #3282b8; } // bright blue accent
 .pointer { cursor: pointer; }
 
 label#twitterWarning { font-weight: 400; }

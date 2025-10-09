@@ -228,15 +228,19 @@ li.edit-hangout {
 }
 
 #createGroupButton,
-.btn-createGroup-notLoggedIn { display: inline; margin: 0 2%; border: 1px solid #E5E5E5; }
+.btn-createGroup-notLoggedIn { display: inline; margin: 0 2%; border: 1px solid #e8e8e8; }
 
 .btn-clear {
   width: 100%;
-  @include font-face(700, 15px, light, #E5E5E5);
-  background: #FF7F50;
-  border: 1px solid #E5E5E5;
+  @include font-face(700, 15px, light, #ffffff);
+  background: #3282b8; // bright blue
+  border: 1px solid #3282b8;
 
-  &:hover { background: #FF7F50; border: 1px solid #E5E5E5; color: #121212; }
+  &:hover { 
+    background: #0f4c75; // darker blue on hover
+    border: 1px solid #0f4c75; 
+    color: #ffffff; 
+  }
 }
 
 .standard-header-btn {

@@ -1,53 +1,81 @@
 <template name="todayILearnedItem">
-  <div class="learning-item til-item">
-    <div class="til-content">
-      <p class="til-text">{{title}}</p>
-      <div class="til-meta">
-        <small class="til-date">
-          <i class="fas fa-calendar-day" aria-hidden="true"></i>
-          {{formatDate created_at}}
-        </small>
-        <small class="til-time">
-          <i class="fas fa-clock" aria-hidden="true"></i>
-          {{formatTime created_at}}
-        </small>
-        {{#if canEdit}}
-          <small class="til-actions">
-            <a href="#" class="edit-til" data-id="{{_id}}">
-              <i class="fas fa-edit" aria-hidden="true"></i> Edit
-            </a>
-            <a href="#" class="delete-til" data-id="{{_id}}">
-              <i class="fas fa-trash" aria-hidden="true"></i> Delete
-            </a>
-          </small>
-        {{/if}}
-      </div>
+  <article class="learning-item til-item" role="article" aria-label="Today I Learned entry">
+    <div class="til-card">
       {{#if kudos}}
-        <div class="til-kudos">
-          <i class="fas fa-heart" aria-hidden="true"></i> {{kudos}}
+        <div class="til-kudos" role="status" aria-label="{{kudos}} kudos">
+          <i class="fas fa-heart" aria-hidden="true"></i>
+          <span class="til-kudos-count">{{kudos}}</span>
         </div>
       {{/if}}
+      
+      <div class="til-content">
+        <p class="til-text">{{title}}</p>
+        
+        <div class="til-footer">
+          <div class="til-meta">
+            <time class="til-date" datetime="{{created_at}}">
+              <i class="fas fa-calendar-day" aria-hidden="true"></i>
+              <span>{{formatDate created_at}}</span>
+            </time>
+            <time class="til-time" datetime="{{created_at}}">
+              <i class="fas fa-clock" aria-hidden="true"></i>
+              <span>{{formatTime created_at}}</span>
+            </time>
+          </div>
+          
+          {{#if canEdit}}
+            <div class="til-actions">
+              <a href="#" class="til-action-btn edit-til" data-id="{{_id}}" role="button" aria-label="Edit entry">
+                <i class="fas fa-edit" aria-hidden="true"></i>
+                <span>Edit</span>
+              </a>
+              <a href="#" class="til-action-btn delete-til" data-id="{{_id}}" role="button" aria-label="Delete entry">
+                <i class="fas fa-trash" aria-hidden="true"></i>
+                <span>Delete</span>
+              </a>
+            </div>
+          {{/if}}
+        </div>
+      </div>
     </div>
-  </div>
+  </article>
 </template>
 
 <template name="profileTodayILearned">
-  <div class="box">
-    <h3>#TodayILearned <small>(Personal Entries)</small></h3>
+  <section class="box til-section" aria-labelledby="til-heading">
+    <header class="til-header">
+      <h3 id="til-heading" class="til-title">
+        <span class="til-icon">💡</span>
+        <span class="til-title-text">#TodayILearned</span>
+        <small class="til-subtitle">(Personal Entries)</small>
+      </h3>
+    </header>
+    
     <div class="status-list">
-      <div class="learnings til-entries">
+      <div class="learnings til-entries" role="feed" aria-label="Today I Learned entries">
         {{#each todayILearnedEntries}}
           {{> todayILearnedItem}}
         {{/each}}
+        
         {{#if Template.subscriptionsReady}}
           {{#if hasMoreTodayILearned}}
-            <button id="load-more-til" class="btn btn-default btn-block">Load more</button>
+            <div class="til-load-more-container">
+              <button id="load-more-til" class="btn btn-load-more" aria-label="Load more entries">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                <span>Load more</span>
+              </button>
+            </div>
           {{/if}}
         {{/if}}
+        
         {{#unless todayILearnedEntries.count}}
-          <p class="text-muted">No personal Today I Learned entries yet. Add some from a hangout page!</p>
+          <div class="til-empty-state" role="status">
+            <i class="fas fa-lightbulb til-empty-icon" aria-hidden="true"></i>
+            <p class="til-empty-text">No personal Today I Learned entries yet.</p>
+            <p class="til-empty-hint">Add some from a hangout page to get started!</p>
+          </div>
         {{/unless}}
       </div>
     </div>
-  </div>
+  </section>
 </template>

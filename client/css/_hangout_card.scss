@@ -1,189 +1,653 @@
+/* ========================================
+   Hangout Card - Modern Dark Navy Theme (Matching Home Page)
+   ======================================== */
+
 .hangout-card {
-  &.completed {
-    height: 280px;
-
-    @media screen and (min-width: 482px) and (max-width: 603px) {
-      height: 380px;
-    }
-  }
-
-  @media screen and (min-width: 482px) and (max-width: 520px) {
-    height: 350px;
-  }
-  @media screen and (max-width: 389px) {
-    height: 320px;
-  }
-
-  border-radius: 0 !important;
-  background: $bg-white;          // dark card background (#1F1F1F)
-  display: inline-flex;
+  position: relative;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 320px;
+  min-height: 340px;
   width: 100%;
-  margin: 5px 0px;
-  padding: 15px 20px;
+  background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%); // navy gradient like home
+  border-radius: 16px;
+  padding: 0;
   overflow: hidden;
-  position: relative;
-  color: $primary-grey;           // default text color
+  color: $primary-grey;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  animation: fadeInUp 0.5s ease-out backwards;
+  
+  // Shimmer effect border
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+      transparent 0%,
+      rgba(50, 130, 184, 0.5) 50%,
+      transparent 100%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  
+  &.completed {
+    min-height: 300px;
+    opacity: 0.85;
+    
+    &::before {
+      background: linear-gradient(90deg, 
+        transparent 0%,
+        rgba(232, 232, 232, 0.3) 50%,
+        transparent 100%);
+    }
+  }
+  
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(50, 130, 184, 0.3); // blue shadow
+    
+    &::before {
+      background: linear-gradient(90deg, 
+        $cta-blue 0%,
+        $cta-red 50%,
+        $cta-blue 100%);
+    }
+  }
 
-  .card-details {
+  // Clickable card link wrapper
+  .hangout-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
     flex: 1;
-  }
-
-  p.overflowtext {
-    color: $secondary-grey;
-  }
-
-  .hangout-topic {
-    width: 85%;
-    line-height: 30px;
-    margin-top: 6px;
-    margin-bottom: 10px;
-    @include font-face(600, 20px, normal, $cta-blue); // coral accent
-    text-align: left;
-    text-transform: capitalize;
-
-    &.completed {
-      color: $secondary-grey;
+    padding: 20px 24px;
+    
+    &:hover,
+    &:focus {
+      text-decoration: none;
+      color: inherit;
     }
   }
 
-  .hangout-date {
-    letter-spacing: 0.2px;
-    margin: 7px 0px;
-    color: $primary-grey;
+  // Live Badge
+  .live-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #DC3545 0%, #AD4545 100%);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: $white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    z-index: 10;
+    animation: heartbeat 1.5s ease-in-out infinite;
   }
 
-  .hangout-meta {
-    font-size: 18px;
-    line-height: 1.2;
-    margin: 0;
-    color: $secondary-grey;
+  .live-pulse {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: $white;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
   }
 
-  button {
-    display: inline;
-    padding: 0 8px;
+  .live-text {
+    font-weight: 700;
   }
 
-  .btn-default {
-    border: none !important;
-    color: $secondary-grey;
-
-    &:hover, &:focus, &:active {
-      color: $secondary-grey;
-      border: none !important;
-      background: none !important;
-    }
-  }
-
-  .join-now {
-    width: 65%;
-  }
-
+  // Card Header
   .card-header-wrapper {
     display: flex;
-    padding: 5px 0px;
+    justify-content: space-between;
     align-items: center;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(58, 58, 58, 0.6);
     width: 100%;
 
     .left-section {
-      width: 60%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
       display: flex;
     }
 
     .right-section {
-      width: 40%;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-    }
-
-    .icon-spacing {
-      padding: 0px 8px;
-
-      @media screen and (max-width: 339px) {
-        padding: 0px 2px;
-      }
-    }
-
-    .info-icon {
-      font-size: 20px;
-      color: $primary-grey;
+      gap: 12px;
+      flex-shrink: 0;
     }
   }
 
   .hangout-title-tag {
-    font-size: 95%;
-    border: 2px solid $cta-blue;     // coral border
-    border-radius: 4px;
-    padding: 2px 12px;
-    font-weight: bold;
-    max-width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $cta-blue; // bright blue
+    background: rgba(50, 130, 184, 0.15); // blue accent background
+    border: 2px solid $cta-blue;
+    border-radius: 8px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: $white;
+    max-width: 100%;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: $white;
+      background: rgba(50, 130, 184, 0.25);
+      transform: scale(1.05);
+    }
+    
+    i {
+      font-size: 11px;
+    }
   }
 
-  div.calendar {
-    width: 80%;
-    line-height: 1.1;
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    border: 1px solid rgba(232, 232, 232, 0.2);
+    border-radius: 8px;
+    color: $primary-grey;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: rgba(50, 130, 184, 0.15); // blue accent
+      border-color: $cta-blue;
+      color: $cta-blue;
+      transform: scale(1.1);
+    }
+    
+    i {
+      font-size: 16px;
+    }
   }
 
-  div.more-options {
-    width: 20%;
+  .hangout-type-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    color: $cta-blue; // bright blue
+  }
+
+  // Card Details
+  .card-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .hangout-topic {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: $cta-blue;
+    margin: 0 0 8px;
+    padding-right: 40px;
+    word-wrap: break-word;
+    transition: color 0.3s ease;
+    
+    &.completed {
+      color: $secondary-grey;
+      opacity: 0.8;
+    }
+    
+    .completion-icon {
+      margin-right: 8px;
+      color: $success-green;
+      font-size: 18px;
+    }
+    
+    .topic-text {
+      display: inline;
+    }
+  }
+
+  .hangout-metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .hangout-date,
+  .hangout-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: $secondary-grey;
+    transition: color 0.2s ease;
+    
+    i {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+    
+    &.completed {
+      opacity: 0.7;
+    }
+    
+    &:hover {
+      color: $cta-blue;
+    }
+  }
+
+  .upcoming-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(50, 130, 184, 0.15); // blue accent
+    border-left: 3px solid $cta-blue;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: $cta-blue; // bright blue
+    margin: 8px 0;
+    
+    i {
+      font-size: 12px;
+    }
+  }
+
+  .completed-badge {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(40, 167, 69, 0.15);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $success-green;
+    
+    i {
+      font-size: 12px;
+    }
   }
 
   .show-on-hover {
     display: none;
   }
 
+  // RSVP Buttons Footer
   .rsvp-buttons {
     width: 100%;
+    padding: 20px 24px;
+    border-top: 1px solid rgba(58, 58, 58, 0.6);
+    margin-top: auto;
+  }
 
-    .btn-cb2 {
-      padding: 5px 15px;
-      width: 100%;
-      background: $cta-blue;
-      color: $white;
-
-      &:hover {
-        background: darken($cta-blue, 10%);
-        color: $black;
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    i {
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      
+      i {
+        transform: scale(1.1);
       }
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .btn-rsvp {
+    background: linear-gradient(135deg, $cta-blue 0%, $cta-red 100%);
+    color: $white;
+    box-shadow: 0 4px 12px rgba(255, 127, 80, 0.3);
+    
+    &:hover {
+      background: linear-gradient(135deg, lighten($cta-blue, 5%) 0%, lighten($cta-red, 5%) 100%);
+      box-shadow: 0 6px 20px rgba(255, 127, 80, 0.4);
+    }
+  }
+
+  .btn-join {
+    background: linear-gradient(135deg, $success-green 0%, darken($success-green, 10%) 100%);
+    color: $white;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    
+    &:hover {
+      background: linear-gradient(135deg, lighten($success-green, 5%) 0%, darken($success-green, 5%) 100%);
+      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+  }
+
+  .btn-leave {
+    background: rgba(220, 53, 69, 0.15);
+    color: $danger-red;
+    border: 2px solid $danger-red;
+    
+    &:hover {
+      background: rgba(220, 53, 69, 0.25);
+      color: $white;
+      background: linear-gradient(135deg, $danger-red 0%, darken($danger-red, 10%) 100%);
+      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    }
+  }
+
+  // Hover Effects
+  &:hover {
+    .show-on-hover {
+      display: inline-flex;
+    }
+    
+    .upcoming-badge {
+      background: rgba(255, 127, 80, 0.25);
+    }
+  }
+
+  // Responsive Adjustments
+  @media screen and (max-width: 768px) {
+    min-height: 320px;
+    
+    .hangout-card-link {
+      padding: 16px 18px;
+    }
+    
+    .rsvp-buttons {
+      padding: 16px 18px;
+    }
+    
+    .hangout-topic {
+      font-size: 18px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    min-height: 300px;
+    
+    .hangout-topic {
+      font-size: 16px;
+      padding-right: 20px;
+    }
+    
+    .live-badge {
+      top: 12px;
+      right: 12px;
+      padding: 6px 12px;
+      font-size: 11px;
     }
   }
 }
 
-.hangout-card:hover {
-  @include box-shadow(0px, 12px, 60px, rgba(0, 0, 0, .5));
-  .show-on-hover { display: block; }
-  h5.completed.show-on-hover { display: inline-block; line-height: 0.8; }
-  .hangout-description { display: none; }
-  .hangout-meta { display: none; }
+/* ========================================
+   Card Wrapper Styles
+   ======================================== */
+
+.hangout-card-wrapper {
+  animation: slideInUp 0.5s ease-out backwards;
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+  &:nth-child(6) { animation-delay: 0.6s; }
 }
 
 .card {
+  background: transparent;
+  border: none;
+  
   div.popover {
     overflow-wrap: break-word;
     word-wrap: break-word;
     background: $bg-white;
     color: $primary-grey;
+    border: 1px solid $divider;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   }
 }
+
+/* ========================================
+   Hangouts Grid Layout
+   ======================================== */
+
+.hangouts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+  
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* ========================================
+   Section Headers
+   ======================================== */
+
+.hangouts-section-header {
+  margin: 48px 0 32px;
+  animation: fadeIn 0.6s ease-out;
+  
+  &.past-section {
+    margin-top: 64px;
+  }
+}
+
+.hangouts-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 28px;
+  font-weight: 700;
+  color: $primary-grey;
+  margin: 0 0 16px;
+  
+  i {
+    font-size: 24px;
+    color: $cta-blue;
+  }
+}
+
+.section-divider {
+  height: 3px;
+  background: linear-gradient(90deg, $cta-blue 0%, transparent 100%);
+  border-radius: 2px;
+}
+
+/* ========================================
+   Load More & Empty States
+   ======================================== */
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin: 48px 0;
+}
+
+.btn-load-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  color: $cta-blue;
+  background: transparent;
+  border: 2px solid $cta-blue;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  i {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover {
+    color: $white;
+    background: rgba(255, 127, 80, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 127, 80, 0.3);
+    
+    i {
+      transform: translateY(3px);
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.no-more-hangouts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 20px;
+  text-align: center;
+  color: $secondary-grey;
+  animation: fadeIn 0.5s ease-out;
+  
+  i {
+    font-size: 48px;
+    color: $success-green;
+    opacity: 0.6;
+  }
+  
+  h5 {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
 
 .hide-date {
   display: none !important;
 }
 
 .hangout-in-progress-time {
-  font-weight: 400;
-  color: $secondary-grey !important;
+  font-weight: 500;
+  color: $cta-blue !important;
   text-transform: uppercase;
   font-style: italic;
+}
+
+/* ========================================
+   Animations
+   ======================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.05);
+  }
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(1.05);
+  }
 }

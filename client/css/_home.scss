@@ -36,18 +36,18 @@
       a.link {
         display: inline-block;
         background: $cta-blue;
-        color: $black;
+        color: $white;
         padding: 12px 28px;
         border-radius: 50px;
         font-weight: 700;
         font-size: 1rem;
         transition: all 0.3s ease;
-        box-shadow: 0 6px 15px rgba(255,127,80,0.3);
+        box-shadow: 0 6px 15px rgba(50,130,184,0.3);
 
         &:hover {
           background: $cta-red;
           transform: translateY(-3px);
-          box-shadow: 0 8px 20px rgba(255,99,71,0.4);
+          box-shadow: 0 8px 20px rgba(15,76,117,0.4);
         }
       }
     }
@@ -74,7 +74,7 @@
 
       &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(255,127,80,0.4);
+        box-shadow: 0 8px 25px rgba(50,130,184,0.4);
       }
 
       .total {
@@ -123,7 +123,7 @@
 
       &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(255,127,80,0.3);
+        box-shadow: 0 10px 30px rgba(50,130,184,0.3);
       }
 
       h3 {

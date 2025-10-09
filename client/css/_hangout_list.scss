@@ -2,8 +2,8 @@
 #past_hangouts {
   .study-group-tag {
     z-index: 1;
-    color: $cta-blue;       // coral accent
-    background: $white;     // card background (#1F1F1F)
+    color: $cta-blue;       // bright blue accent
+    background: $well;      // darker navy card background
     position: absolute;
     font-size: 11px;
   }
@@ -22,13 +22,13 @@
       font-size: 85%;
     }
 
-    border-top: 1px solid $divider;
+    border-top: 1px solid $divider; // blue-gray divider
     padding: 20px 0;
 
     ul.dropdown-menu {
       top: 35px;
       left: -200px;
-      background: $bg-white; // dark background
+      background: $well; // darker navy background
       color: $primary-grey;
     }
 
@@ -37,7 +37,7 @@
     }
 
     .hangout-topic {
-      @include font-face(400, 17px, normal, $cta-blue);
+      @include font-face(400, 17px, normal, $cta-blue); // bright blue
 
       &.completed {
         color: $warm-grey;
