@@ -2,7 +2,10 @@ import { check, Match } from "meteor/check";
 import { UnsubscribeLinks } from "../../imports/api/unsubscribe_links/unsubscribe_links";
 Meteor.methods({
   getUserDetails: function(userId) {
-    check(userId, String);
+    check(userId, Match.Maybe(String));
+    if (!userId) {
+      return null;
+    }
     return Meteor.users.findOne({ _id: userId }, { fields: { emails: 0, services: 0, roles: 0, email: 0 } });
   },
 
@@ -73,7 +76,10 @@ Meteor.methods({
   },
 
   getHangoutsJoinedCount: function(userId) {
-    check(userId, String);
+    check(userId, Match.Maybe(String));
+    if (!userId) {
+      return 0;
+    }
     return Hangouts.find({
       users: { $elemMatch: { $eq: userId } },
       visibility: { $ne: false }
@@ -167,7 +173,11 @@ Meteor.methods({
  */
 Meteor.methods({
   "users.getSupportLink"(userId) {
-    check(userId, String);
+    check(userId, Match.Maybe(String));
+
+    if (!userId) {
+      return null;
+    }
 
     const user = Meteor.users.findOne({ _id: userId }, { fields: { "profile.support_links": 1 } });
     if (user && user.profile && user.profile.support_links) {

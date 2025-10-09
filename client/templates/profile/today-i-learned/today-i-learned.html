@@ -1,0 +1,53 @@
+<template name="todayILearnedItem">
+  <div class="learning-item til-item">
+    <div class="til-content">
+      <p class="til-text">{{title}}</p>
+      <div class="til-meta">
+        <small class="til-date">
+          <i class="fas fa-calendar-day" aria-hidden="true"></i>
+          {{formatDate created_at}}
+        </small>
+        <small class="til-time">
+          <i class="fas fa-clock" aria-hidden="true"></i>
+          {{formatTime created_at}}
+        </small>
+        {{#if canEdit}}
+          <small class="til-actions">
+            <a href="#" class="edit-til" data-id="{{_id}}">
+              <i class="fas fa-edit" aria-hidden="true"></i> Edit
+            </a>
+            <a href="#" class="delete-til" data-id="{{_id}}">
+              <i class="fas fa-trash" aria-hidden="true"></i> Delete
+            </a>
+          </small>
+        {{/if}}
+      </div>
+      {{#if kudos}}
+        <div class="til-kudos">
+          <i class="fas fa-heart" aria-hidden="true"></i> {{kudos}}
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</template>
+
+<template name="profileTodayILearned">
+  <div class="box">
+    <h3>#TodayILearned <small>(Personal Entries)</small></h3>
+    <div class="status-list">
+      <div class="learnings til-entries">
+        {{#each todayILearnedEntries}}
+          {{> todayILearnedItem}}
+        {{/each}}
+        {{#if Template.subscriptionsReady}}
+          {{#if hasMoreTodayILearned}}
+            <button id="load-more-til" class="btn btn-default btn-block">Load more</button>
+          {{/if}}
+        {{/if}}
+        {{#unless todayILearnedEntries.count}}
+          <p class="text-muted">No personal Today I Learned entries yet. Add some from a hangout page!</p>
+        {{/unless}}
+      </div>
+    </div>
+  </div>
+</template>

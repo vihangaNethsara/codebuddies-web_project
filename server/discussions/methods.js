@@ -18,10 +18,29 @@ Meteor.methods({
     });
 
     const actor = Meteor.user();
+    console.log("Discussion creation attempt by user:", actor ? actor.username : "not logged in");
 
-    if (!actor || !Roles.userIsInRole(actor, ["owner", "admin", "moderator", "member", "user"], data.groupId)) {
-      throw new Meteor.Error(403, "Access denied");
-    } else {
+    if (!actor) {
+      console.log("Error: User not logged in");
+      throw new Meteor.Error(403, "Access denied - please log in");
+    }
+
+    // For general discussions (CB group), allow any logged-in user
+    // For study groups, check roles
+    if (
+      data.groupId !== "CB" &&
+      !Roles.userIsInRole(actor, ["owner", "admin", "moderator", "member", "user"], data.groupId)
+    ) {
+      console.log("Error: User lacks permissions for group:", data.groupId);
+      throw new Meteor.Error(403, "Access denied - insufficient permissions");
+    }
+
+    console.log("User authorized, creating discussion:", data.topic);
+
+    // Additional validation
+    if (!actor.username) {
+      console.log("Error: User has no username");
+      throw new Meteor.Error(400, "User profile incomplete - missing username");
     }
 
     // auth
@@ -30,7 +49,7 @@ Meteor.methods({
     const author = {
       id: actor._id,
       username: actor.username,
-      avatar: actor.profile.avatar.default
+      avatar: (actor.profile && actor.profile.avatar && actor.profile.avatar.default) || "/default-avatar.png"
     };
     const study_group = {
       id: data.groupId,
@@ -60,17 +79,27 @@ Meteor.methods({
       }
     };
 
-    //insert
-    discussion._id = Discussions.insert(discussion);
+    console.log("Inserting discussion into database...");
+    try {
+      //insert
+      discussion._id = Discussions.insert(discussion);
+      console.log("Discussion created successfully with ID:", discussion._id);
+    } catch (error) {
+      console.error("Error inserting discussion:", error);
+      throw new Meteor.Error(500, "Failed to create discussion: " + error.message);
+    }
 
-    StudyGroups.update(
-      { _id: study_group.id },
-      {
-        $set: {
-          updatedAt: new Date()
+    // Only update study groups if it's not the general CB group
+    if (data.groupId !== "CB") {
+      StudyGroups.update(
+        { _id: study_group.id },
+        {
+          $set: {
+            updatedAt: new Date()
+          }
         }
-      }
-    );
+      );
+    }
 
     // slack alert
     discussionsSlackAlert(discussion);

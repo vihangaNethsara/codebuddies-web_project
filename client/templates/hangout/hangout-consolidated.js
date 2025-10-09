@@ -944,6 +944,13 @@ Template.hangoutLearnings.onCreated(function() {
     console.log("Asking for " + limit + " learnings...");
     var hangoutId = FlowRouter.getParam("hangoutId");
     console.log(hangoutId);
+
+    // Only subscribe if we have a valid hangoutId
+    if (!hangoutId) {
+      console.log("No hangoutId found, skipping learnings subscription");
+      return;
+    }
+
     var subscription = instance.subscribe("learningsByHangoutId", limit, hangoutId);
     if (subscription.ready()) {
       console.log("> Received " + limit + " learnings. \n\n");
@@ -989,57 +996,199 @@ Template.registerHelper("learningOwner", function(ownerid) {
   }
 });
 
+Template.hangoutLearned.helpers({
+  learnedCharacterCount: function() {
+    return 280;
+  }
+});
+
+Template.hangoutLearned.onRendered(function() {
+  // Initially disable the submit button
+  $("#submit-learning-btn").prop("disabled", true);
+
+  // Add direct event binding as backup
+  $(document).on("click", "#submit-learning-btn", function(e) {
+    e.preventDefault();
+    console.log("Direct jQuery click handler triggered!");
+    alert("Direct click worked!");
+    submitLearningEntry();
+  });
+});
+
 Template.hangoutLearned.events({
   "keyup textarea#learned-text": function(event) {
     let learnedCounterValue = 280;
     let maxChars = 280;
     var currentLength = $("textarea#learned-text").val().length;
     learnedCounterValue = maxChars - currentLength;
+
+    // Enable/disable submit button based on content
+    const submitBtn = $("#submit-learning-btn");
+    if ($.trim($("textarea#learned-text").val()) === "") {
+      submitBtn.prop("disabled", true);
+    } else {
+      submitBtn.prop("disabled", false);
+    }
+
     $(".learnedCharactersLeft")
       .text(learnedCounterValue)
-      .append(" <small><em>(Hit enter to submit)</em></small>");
+      .append(" <small><em>(Hit enter or click Update)</em></small>");
+  },
+  "keydown textarea#learned-text": function(event) {
+    // Prevent form submission if Shift+Enter is pressed (allow line breaks)
+    if (event.which === 13 && event.shiftKey) {
+      return true; // Allow the line break
+    }
+    // If just Enter (without Shift), prevent default and handle submission
+    if (event.which === 13) {
+      event.preventDefault();
+      return false;
+    }
   },
   "keypress textarea#learned-text": function(event) {
     if (event.which === 13) {
-      var learningStatus = $("#learned-text").val();
-      if ($.trim(learningStatus) == "") {
-        $("#topic").focus();
-        swal({
-          title: TAPi18n.__("Please share something you've learned"),
-          confirmButtonText: TAPi18n.__("ok"),
-          type: "error"
-        });
-        return;
-      }
-      let optInTweet = $("#chkOptInTweet").is(":checked");
-      var data = {
-        user_id: Meteor.userId(),
-        username: Meteor.user().username,
-        title: learningStatus,
-        hangout_id: FlowRouter.getParam("hangoutId"),
-        study_group_id: FlowRouter.getParam("studyGroupId"),
-        optInTweet
-      };
-      Meteor.call("addLearning", data, function(error, result) {
-        if (error) {
-          console.log(error);
-        }
-        if (result) {
-          swal({
-            type: "success",
-            text: "Thank you for sharing what you learned!",
-            timer: 500,
-            showConfirmButton: false
-          });
-          $("#learned-text")
-            .val("")
-            .blur();
-          $(".learnedCharactersLeft").text(280);
-        }
-      });
+      submitLearningEntry();
     }
+  },
+  "click #submit-learning-btn": function(event, template) {
+    event.preventDefault();
+    console.log("Submit button clicked!"); // Debug log
+    alert("Button clicked!"); // Simple test
+    submitLearningEntry();
   }
 });
+
+// Global function to handle learning submission
+function submitLearningEntry() {
+  console.log("submitLearningEntry called"); // Debug log
+
+  var learningStatus = $("#learned-text").val();
+  if ($.trim(learningStatus) == "") {
+    $("#learned-text").focus();
+    // Use swal instead of TILAlert for now
+    swal({
+      title: "Please enter something you learned",
+      type: "warning",
+      confirmButtonText: "OK"
+    });
+    return;
+  }
+
+  // Check if user is logged in
+  if (!Meteor.userId()) {
+    swal({
+      title: "Please log in",
+      text: "You need to be logged in to save your learning",
+      type: "error",
+      confirmButtonText: "OK"
+    });
+    return;
+  }
+
+  // Check if user object exists
+  if (!Meteor.user() || !Meteor.user().username) {
+    swal({
+      title: "User Error",
+      text: "User information not available. Please refresh and try again.",
+      type: "error",
+      confirmButtonText: "OK"
+    });
+    return;
+  }
+
+  // Disable the submit button during submission
+  const submitBtn = $("#submit-learning-btn");
+  submitBtn.prop("disabled", true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+
+  let optInTweet = $("#chkOptInTweet").is(":checked");
+
+  console.log("Saving learning:", learningStatus);
+  console.log("User ID:", Meteor.userId());
+  console.log("Username:", Meteor.user().username);
+
+  // Save to both collections for comprehensive tracking
+  // 1. Save to existing Learnings collection (for hangout-specific tracking)
+  var hangoutData = {
+    user_id: Meteor.userId(),
+    username: Meteor.user().username,
+    title: learningStatus,
+    hangout_id: FlowRouter.getParam("hangoutId"),
+    study_group_id: FlowRouter.getParam("studyGroupId"),
+    optInTweet
+  };
+
+  // 2. Save to new TodayILearned collection (for profile display with date/time)
+  var tilData = {
+    user_id: Meteor.userId(),
+    username: Meteor.user().username,
+    title: learningStatus,
+    optInTweet
+  };
+
+  // Call both methods with better error handling
+  let hangoutSuccess = false;
+  let tilSuccess = false;
+  let callsCompleted = 0;
+
+  const checkCompletion = function() {
+    callsCompleted++;
+    if (callsCompleted === 2) {
+      // Re-enable the submit button
+      submitBtn.prop("disabled", false).html('<i class="fas fa-paper-plane"></i> Update');
+
+      // Both calls completed
+      if (hangoutSuccess || tilSuccess) {
+        // At least one succeeded
+        if (typeof TILAlert !== "undefined") {
+          TILAlert.success("✅ Your learning has been saved successfully!");
+        } else {
+          swal({
+            title: "Success!",
+            text: "Your learning has been saved successfully!",
+            type: "success",
+            timer: 2000,
+            showConfirmButton: false
+          });
+        }
+        $("#learned-text")
+          .val("")
+          .blur();
+        $(".learnedCharactersLeft").text(280);
+        submitBtn.prop("disabled", true);
+      } else {
+        // Both failed
+        swal({
+          title: "Error",
+          text: "Failed to save your learning. Please try again.",
+          type: "error",
+          confirmButtonText: "OK"
+        });
+      }
+    }
+  };
+
+  Meteor.call("addLearning", hangoutData, function(error, result) {
+    if (error) {
+      console.log("Hangout learning error:", error);
+      hangoutSuccess = false;
+    } else {
+      console.log("Hangout learning saved successfully");
+      hangoutSuccess = true;
+    }
+    checkCompletion();
+  });
+
+  Meteor.call("addTodayILearned", tilData, function(error, result) {
+    if (error) {
+      console.log("TodayILearned error:", error);
+      tilSuccess = false;
+    } else {
+      console.log("TodayILearned saved successfully");
+      tilSuccess = true;
+    }
+    checkCompletion();
+  });
+}
 
 // Support Hangout Organizer
 Template.supportHangoutOrganizer.helpers({

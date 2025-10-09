@@ -135,13 +135,14 @@
         </div>
 
         <div class="col-md-6 profile-learnings">
+          <!-- display personal TIL entries with date/time -->
+          {{> profileTodayILearned }}
+          
+          <!-- display hangout-related learnings-->
           <div class="box">
-            <h3>#TodayILearned</h3>
-            <!-- add learnings here-->
-            {{> hangoutLearned }}
+            <h3>Hangout Learnings</h3>
+            {{> profileLearnings }}
           </div>
-          <!-- display learnings-->
-          {{> profileLearnings }}
 
         </div>
 
