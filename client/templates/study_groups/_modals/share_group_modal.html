@@ -1,0 +1,41 @@
+<template name="share_group_modal">
+  <div class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-panel premium-card share-modal">
+      <header class="modal-header">
+        <h3>Share this group</h3>
+        <button class="btn-ghost modal-close" aria-label="Close">
+          <i class="fa fa-times"></i>
+        </button>
+      </header>
+
+      <div class="modal-body">
+        <p class="muted">Share the group with your friends or copy the link.</p>
+
+        <div class="share-actions">
+          <button class="btn-premium btn-primary share-native" title="Share">
+            <i class="fa fa-share-alt"></i>
+            <span class="btn-text">Share</span>
+          </button>
+
+          <button class="btn-premium btn-secondary copy-link" title="Copy link">
+            <i class="fa fa-link"></i>
+            <span class="btn-text">Copy link</span>
+          </button>
+
+          <div class="social-list">
+            <a href="#" class="social-btn twitter" data-platform="twitter" title="Twitter"><i class="fa fa-twitter"></i></a>
+            <a href="#" class="social-btn facebook" data-platform="facebook" title="Facebook"><i class="fa fa-facebook"></i></a>
+            <a href="#" class="social-btn linkedin" data-platform="linkedin" title="LinkedIn"><i class="fa fa-linkedin"></i></a>
+          </div>
+        </div>
+
+        <div class="share-link">
+          <input type="text" class="input-link" readonly />
+          <button class="btn-premium btn-ghost btn-sm copy-inline" title="Copy inline">
+            <i class="fa fa-clipboard"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
