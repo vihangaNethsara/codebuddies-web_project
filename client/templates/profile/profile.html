@@ -14,7 +14,7 @@
         {{else}}
           <div class="col-sm-12 text-center">
             {{#with userInfo}}
-              <img src="{{#if profile.avatar.image_192 }} {{profile.avatar.image_192}} {{else}} {{profile.avatar.default}} {{/if}}" class="img-circle avatar profile-avatar" alt="profile image"/>
+              <img src="{{#if profile.avatar.image_192}}{{profile.avatar.image_192}}{{else}}{{#if profile.avatar.default}}{{profile.avatar.default}}{{else}}/default-avatar.png{{/if}}{{/if}}" class="img-circle avatar profile-avatar" alt="profile image"/>
               {{#if profile.firstname }}
                 <span>
                   {{ profile.firstname }}
